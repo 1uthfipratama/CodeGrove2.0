@@ -42,9 +42,19 @@
                     </div>
                 </div>
             @endforeach
+            @if ($posts instanceof \Illuminate\Pagination\LengthAwarePaginator)
+                <div class="pagination-wrapper">
+                    <div class="text-muted small mb-2">
+                        Showing {{ $posts->firstItem() ?? 0 }} to {{ $posts->lastItem() ?? 0 }} of {{ $posts->total() }} results
+                    </div>
+                    <nav aria-label="Posts pagination" class="w-100 d-flex justify-content-center">
+                        {{ $posts->appends(request()->query())->onEachSide(1)->links('pagination::bootstrap-5') }}
+                    </nav>
+                </div>
+            @endif
         </div>
-        
-        
+
+
 
         <a href="/add-question" class="custom-button">
             <div class="plus-symbol">+</div>
@@ -80,6 +90,16 @@
         .plus-symbol {
             color: black;
             font-size: 24px;
+        }
+
+        .pagination-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .pagination-wrapper .pagination {
+            margin-bottom: 0;
         }
     </style>
 @endsection

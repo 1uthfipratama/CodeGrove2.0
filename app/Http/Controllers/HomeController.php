@@ -22,63 +22,29 @@ class HomeController extends Controller
         
         $sort = $request->sort;
         $selectedLanguage = $request->language;
-        if ($sort || $selectedLanguage) {
+
+        $postsQuery = Post::where('status', 'active');
+
+        if ($selectedLanguage && $selectedLanguage != -1) {
+            $postsQuery = $postsQuery->where('programming_language_id', $selectedLanguage);
+        }
+
+        if ($sort) {
             if ($sort == "oldToNew") {
-                if ($selectedLanguage == -1) {
-                    $posts = Post::where('status', 'active')
-                    ->orderBy('created_at', 'asc')
-                    ->get();
-                }
-                else {
-                    $posts = Post::where('status', 'active')
-                    ->where('programming_language_id', $selectedLanguage)
-                    ->orderBy('created_at', 'asc')
-                    ->get();
-                }
+                $postsQuery = $postsQuery->orderBy('created_at', 'asc');
             }
             else if ($sort == "AZ") {
-                if ($selectedLanguage == -1) {
-                    $posts = Post::where('status', 'active')
-                    ->orderBy('post_content', 'asc')
-                    ->get();
-                }
-                else {
-                    $posts = Post::where('status', 'active')
-                    ->where('programming_language_id', $selectedLanguage)
-                    ->orderBy('post_content', 'asc')
-                    ->get();
-                }
+                $postsQuery = $postsQuery->orderBy('post_content', 'asc');
             }
             else if ($sort == "ZA") {
-                if ($selectedLanguage == -1) {
-                    $posts = Post::where('status', 'active')
-                    ->orderBy('post_content', 'desc')
-                    ->get();
-                }
-                else {
-                    $posts = Post::where('status', 'active')
-                    ->where('programming_language_id', $selectedLanguage)
-                    ->orderBy('post_content', 'desc')
-                    ->get();
-                }
+                $postsQuery = $postsQuery->orderBy('post_content', 'desc');
             }
             else {
-                if ($selectedLanguage == -1) {
-                    $posts = Post::where('status', 'active')
-                    ->orderBy('created_at', 'desc')
-                    ->get();
-                }
-                else {
-                    $posts = Post::where('status', 'active')
-                    ->where('programming_language_id', $selectedLanguage)
-                    ->orderBy('created_at', 'desc')
-                    ->get();
-                }
+                $postsQuery = $postsQuery->orderBy('created_at', 'desc');
             }
         }
-        else {
-            $posts = Post::where('status', 'active')->get();
-        }
+
+        $posts = $postsQuery->paginate(10);
         $languages = ProgrammingLanguage::all();
         return view('home', ['posts' => $posts, 'languages' => $languages, 'sort' => $sort, 'selectedLanguage' => $selectedLanguage, 'archiveCount' => $archiveCount]);
     }
@@ -93,7 +59,7 @@ class HomeController extends Controller
                         ->count();
         }
         $searchTerm = $request->input('search');
-        $posts = Post::where('post_content', 'LIKE', '%' . $searchTerm . '%')->where('status', 'active')->get();
+        $posts = Post::where('post_content', 'LIKE', '%' . $searchTerm . '%')->where('status', 'active')->paginate(10);
         $languages = ProgrammingLanguage::all();
         $sort = $request->sort;
         $selectedLanguage = $request->language;
@@ -112,55 +78,29 @@ class HomeController extends Controller
         
         $sort = $request->sort;
         $selectedLanguage = $request->language;
-        if ($sort || $selectedLanguage) {
+
+        $postsQuery = Post::query();
+
+        if ($selectedLanguage && $selectedLanguage != -1) {
+            $postsQuery = $postsQuery->where('programming_language_id', $selectedLanguage);
+        }
+
+        if ($sort) {
             if ($sort == "oldToNew") {
-                if ($selectedLanguage == -1) {
-                    $posts = Post::orderBy('created_at', 'asc')
-                    ->get();
-                }
-                else {
-                    $posts = Post::where('programming_language_id', $selectedLanguage)
-                    ->orderBy('created_at', 'asc')
-                    ->get();
-                }
+                $postsQuery = $postsQuery->orderBy('created_at', 'asc');
             }
             else if ($sort == "AZ") {
-                if ($selectedLanguage == -1) {
-                    $posts = Post::orderBy('post_content', 'asc')
-                    ->get();
-                }
-                else {
-                    $posts = Post::where('programming_language_id', $selectedLanguage)
-                    ->orderBy('post_content', 'asc')
-                    ->get();
-                }
+                $postsQuery = $postsQuery->orderBy('post_content', 'asc');
             }
             else if ($sort == "ZA") {
-                if ($selectedLanguage == -1) {
-                    $posts = Post::orderBy('post_content', 'desc')
-                    ->get();
-                }
-                else {
-                    $posts = Post::where('programming_language_id', $selectedLanguage)
-                    ->orderBy('post_content', 'desc')
-                    ->get();
-                }
+                $postsQuery = $postsQuery->orderBy('post_content', 'desc');
             }
             else {
-                if ($selectedLanguage == -1) {
-                    $posts = Post::orderBy('created_at', 'desc')
-                    ->get();
-                }
-                else {
-                    $posts = Post::where('programming_language_id', $selectedLanguage)
-                    ->orderBy('created_at', 'desc')
-                    ->get();
-                }
+                $postsQuery = $postsQuery->orderBy('created_at', 'desc');
             }
         }
-        else {
-            $posts = Post::all();
-        }
+
+        $posts = $postsQuery->paginate(10);
         $languages = ProgrammingLanguage::all();
         return view('admin', ['posts' => $posts, 'languages' => $languages, 'sort' => $sort, 'selectedLanguage' => $selectedLanguage, 'archiveCount' => $archiveCount, 'sourceUrl' => 'admin']);
     }
@@ -176,7 +116,7 @@ class HomeController extends Controller
         }
         
         $searchTerm = $request->input('search');
-        $posts = Post::where('post_content', 'LIKE', '%' . $searchTerm . '%')->get();
+        $posts = Post::where('post_content', 'LIKE', '%' . $searchTerm . '%')->paginate(10);
         $languages = ProgrammingLanguage::all();
         $sort = $request->sort;
         $selectedLanguage = $request->language;
@@ -196,72 +136,29 @@ class HomeController extends Controller
         
         $sort = $request->sort;
         $selectedLanguage = $request->language;
-        if ($sort || $selectedLanguage) {
+
+        $postsQuery = Post::where('status', 'active')->where('user_id', $userId);
+
+        if ($selectedLanguage && $selectedLanguage != -1) {
+            $postsQuery = $postsQuery->where('programming_language_id', $selectedLanguage);
+        }
+
+        if ($sort) {
             if ($sort == "oldToNew") {
-                if ($selectedLanguage == -1) {
-                    $posts = Post::where('status', 'active')
-                    ->where('user_id', $userId)
-                    ->orderBy('created_at', 'asc')
-                    ->get();
-                }
-                else {
-                    $posts = Post::where('status', 'active')
-                    ->where('user_id', $userId)
-                    ->where('programming_language_id', $selectedLanguage)
-                    ->orderBy('created_at', 'asc')
-                    ->get();
-                }
+                $postsQuery = $postsQuery->orderBy('created_at', 'asc');
             }
             else if ($sort == "AZ") {
-                if ($selectedLanguage == -1) {
-                    $posts = Post::where('status', 'active')
-                    ->where('user_id', $userId)
-                    ->orderBy('post_content', 'asc')
-                    ->get();
-                }
-                else {
-                    $posts = Post::where('status', 'active')
-                    ->where('user_id', $userId)
-                    ->where('programming_language_id', $selectedLanguage)
-                    ->orderBy('post_content', 'asc')
-                    ->get();
-                }
+                $postsQuery = $postsQuery->orderBy('post_content', 'asc');
             }
             else if ($sort == "ZA") {
-                if ($selectedLanguage == -1) {
-                    $posts = Post::where('status', 'active')
-                    ->where('user_id', $userId)
-                    ->orderBy('post_content', 'desc')
-                    ->get();
-                }
-                else {
-                    $posts = Post::where('status', 'active')
-                    ->where('user_id', $userId)
-                    ->where('programming_language_id', $selectedLanguage)
-                    ->orderBy('post_content', 'desc')
-                    ->get();
-                }
+                $postsQuery = $postsQuery->orderBy('post_content', 'desc');
             }
             else {
-                if ($selectedLanguage == -1) {
-                    $posts = Post::where('status', 'active')
-                    ->where('user_id', $userId)
-                    ->orderBy('created_at', 'desc')
-                    ->get();
-                }
-                else {
-                    $posts = Post::where('status', 'active')
-                    ->where('user_id', $userId)
-                    ->where('programming_language_id', $selectedLanguage)
-                    ->orderBy('created_at', 'desc')
-                    ->get();
-                }
+                $postsQuery = $postsQuery->orderBy('created_at', 'desc');
             }
         }
-        else {
-            $posts = Post::where('status', 'active')
-                    ->where('user_id', $userId)->get();
-        }
+
+        $posts = $postsQuery->paginate(10);
         $languages = ProgrammingLanguage::all();
         return view('my_questions', ['posts' => $posts, 'languages' => $languages, 'sort' => $sort, 'selectedLanguage' => $selectedLanguage, 'archiveCount' => $archiveCount, 'sourceUrl' => 'my-questions']);
     }
@@ -269,16 +166,17 @@ class HomeController extends Controller
     public function searchMyQuestions(Request $request)
     {
         $archiveCount = Post::where('user_id', -1)->count();
+        $userId = -1;
         if (Auth::user()) {
             $userId = Auth::user()->id;
             $archiveCount = Post::where('status', 'archived')
                         ->where('user_id', $userId)
                         ->count();
         }
-        
+
         $searchTerm = $request->input('search');
         $posts = Post::where('post_content', 'LIKE', '%' . $searchTerm . '%')->where('status', 'active')
-                    ->where('user_id', $userId)->get();
+                    ->where('user_id', $userId)->paginate(10);
         $languages = ProgrammingLanguage::all();
         $sort = $request->sort;
         $selectedLanguage = $request->language;
@@ -298,72 +196,29 @@ class HomeController extends Controller
         
         $sort = $request->sort;
         $selectedLanguage = $request->language;
-        if ($sort || $selectedLanguage) {
+
+        $postsQuery = Post::where('status', 'archived')->where('user_id', $userId);
+
+        if ($selectedLanguage && $selectedLanguage != -1) {
+            $postsQuery = $postsQuery->where('programming_language_id', $selectedLanguage);
+        }
+
+        if ($sort) {
             if ($sort == "oldToNew") {
-                if ($selectedLanguage == -1) {
-                    $posts = Post::where('status', 'archived')
-                    ->where('user_id', $userId)
-                    ->orderBy('created_at', 'asc')
-                    ->get();
-                }
-                else {
-                    $posts = Post::where('status', 'archived')
-                    ->where('user_id', $userId)
-                    ->where('programming_language_id', $selectedLanguage)
-                    ->orderBy('created_at', 'asc')
-                    ->get();
-                }
+                $postsQuery = $postsQuery->orderBy('created_at', 'asc');
             }
             else if ($sort == "AZ") {
-                if ($selectedLanguage == -1) {
-                    $posts = Post::where('status', 'archived')
-                    ->where('user_id', $userId)
-                    ->orderBy('post_content', 'asc')
-                    ->get();
-                }
-                else {
-                    $posts = Post::where('status', 'archived')
-                    ->where('user_id', $userId)
-                    ->where('programming_language_id', $selectedLanguage)
-                    ->orderBy('post_content', 'asc')
-                    ->get();
-                }
+                $postsQuery = $postsQuery->orderBy('post_content', 'asc');
             }
             else if ($sort == "ZA") {
-                if ($selectedLanguage == -1) {
-                    $posts = Post::where('status', 'archived')
-                    ->where('user_id', $userId)
-                    ->orderBy('post_content', 'desc')
-                    ->get();
-                }
-                else {
-                    $posts = Post::where('status', 'archived')
-                    ->where('user_id', $userId)
-                    ->where('programming_language_id', $selectedLanguage)
-                    ->orderBy('post_content', 'desc')
-                    ->get();
-                }
+                $postsQuery = $postsQuery->orderBy('post_content', 'desc');
             }
             else {
-                if ($selectedLanguage == -1) {
-                    $posts = Post::where('status', 'archived')
-                    ->where('user_id', $userId)
-                    ->orderBy('created_at', 'desc')
-                    ->get();
-                }
-                else {
-                    $posts = Post::where('status', 'archived')
-                    ->where('user_id', $userId)
-                    ->where('programming_language_id', $selectedLanguage)
-                    ->orderBy('created_at', 'desc')
-                    ->get();
-                }
+                $postsQuery = $postsQuery->orderBy('created_at', 'desc');
             }
         }
-        else {
-            $posts = Post::where('status', 'archived')
-                    ->where('user_id', $userId)->get();
-        }
+
+        $posts = $postsQuery->paginate(10);
         $languages = ProgrammingLanguage::all();
         return view('archived_questions', ['posts' => $posts, 'languages' => $languages, 'sort' => $sort, 'selectedLanguage' => $selectedLanguage, 'archiveCount' => $archiveCount, 'sourceUrl' => 'archived-questions']);
     }
@@ -371,16 +226,17 @@ class HomeController extends Controller
     public function searchArchived(Request $request)
     {
         $archiveCount = Post::where('user_id', -1)->count();
+        $userId = -1;
         if (Auth::user()) {
             $userId = Auth::user()->id;
             $archiveCount = Post::where('status', 'archived')
                         ->where('user_id', $userId)
                         ->count();
         }
-        
+
         $searchTerm = $request->input('search');
         $posts = Post::where('post_content', 'LIKE', '%' . $searchTerm . '%')
-                    ->where('user_id', $userId)->where('status', 'archived')->get();
+                    ->where('user_id', $userId)->where('status', 'archived')->paginate(10);
         $languages = ProgrammingLanguage::all();
         $sort = $request->sort;
         $selectedLanguage = $request->language;
