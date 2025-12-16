@@ -57,6 +57,8 @@ Route::middleware(['auth', 'role:user'])->group(function () {
     Route::get('/my-questions', [HomeController::class, 'viewMyQuestions']);
     Route::post('/my-questions/search', [HomeController::class, 'searchMyQuestions']);
     Route::post('/archived-questions/search', [HomeController::class, 'searchArchived']);
+    Route::post('/post/{replyId}/mark-solution', [UserPostController::class, 'markSolution'])->name('mark-solution');
+    Route::post('/post/{replyId}/unmark-solution', [UserPostController::class, 'unmarkSolution'])->name('unmark-solution');
 });
 
 // Admin role routes

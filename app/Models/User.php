@@ -23,7 +23,8 @@ class User extends Authenticatable
         'password',
         'dob',
         'display_picture_path',
-        'role'
+        'role',
+        'lines'
     ];
 
     /**
@@ -43,6 +44,7 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'lines' => 'integer',
     ];
 
     public function userSubscription()
