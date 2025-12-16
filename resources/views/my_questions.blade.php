@@ -176,42 +176,5 @@
         .pagination-wrapper .pagination {
             margin-bottom: 0;
         }
-
-        .language-badge {
-            font-size: 14px;
-            padding: 0.45rem 0.75rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.35rem;
-            transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
-        }
-
-        .language-badge:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-            opacity: 0.95;
-        }
-
-        .language-icon {
-            width: 20px;
-            height: 20px;
-            object-fit: contain;
-        }
-
-        .enhanced-select {
-            min-width: 100%;
-        }
-
-        .filter-panel {
-            position: sticky;
-            top: 70px;
-            z-index: 2;
-        }
-
-        @media (max-width: 576px) {
-            .alert.alert-info {
-                text-align: center;
-            }
-        }
     </style>
 @endsection

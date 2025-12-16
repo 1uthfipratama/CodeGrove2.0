@@ -117,11 +117,11 @@
                         <div class="d-flex align-items-center" style="margin-top: 10px">
                             <span class="badge bg-secondary me-3">Reply #{{ $index + 1 }}</span>
                             <img src="{{ asset('storage/images/'.$reply->user->display_picture_path) }}" class="rounded-circle" width="40" height="40" alt="User Image">
-                            <span class="ms-2 fw-semibold">{{$reply->user->username}}</span>
+                            <span class="ms-2">{{$reply->user->username}}</span>
                             @if ($reply->is_solution)
-                                <span class="badge bg-warning text-dark ms-3 d-flex align-items-center solution-pill">
-                                    🏆 Accepted Solution
-                                    <span class="badge bg-light text-dark ms-2">+5 Lines awarded</span>
+                                <span class="badge bg-success ms-3 d-flex align-items-center">
+                                    Solution ✓
+                                    <span class="badge bg-light text-dark ms-2">+5 Lines</span>
                                 </span>
                             @endif
                         </div>
@@ -137,7 +137,7 @@
                                 @if (!$reply->is_solution)
                                     <form action="/post/{{$reply->id}}/mark-solution" method="post" class="d-inline">
                                         @csrf
-                                        <button type="submit" class="btn btn-success btn-sm">Mark as Solution</button>
+                                        <button type="submit" class="btn btn-outline-success btn-sm">Mark as Solution</button>
                                     </form>
                                 @else
                                     <form action="/post/{{$reply->id}}/unmark-solution" method="post" class="d-inline">
