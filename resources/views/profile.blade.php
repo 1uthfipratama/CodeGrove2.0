@@ -27,6 +27,12 @@
             <div class="col-md-8">
                 <!-- Username -->
                 <h1>{{ $user->username }}</h1>
+                <div class="mb-3">
+                    <span class="badge" style="background-color: yellow; font-size: 24px; color: #333;">
+                        🔥 {{ $user->lines }} Lines
+                    </span>
+                    <div class="text-muted" style="font-size: 14px;">Reputation Points</div>
+                </div>
                 <!-- Count of post liked -->
                 <p>Number of posts liked: {{ $total_post_like }}</p>
                 <!-- Count of likes from others -->

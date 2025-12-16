@@ -28,6 +28,7 @@
                         <div class="d-flex align-items-center" style="margin-top: 10px">
                             <img src="{{ asset('storage/images/'.$post->user->display_picture_path) }}" class="rounded-circle" width="40" height="40" alt="User Image">
                             <span class="ms-2">{{$post->user->username}}</span>
+                            <small class="text-muted ms-2">(🔥 {{$post->user->lines}} lines)</small>
                         </div>
                         <div class="d-flex align-items-center">
                             <span class="badge bg-warning" style="margin-right: 10px">{{ucwords($post->status)}}</span>
@@ -41,9 +42,19 @@
                     </div>
                 </div>
             @endforeach
+            @if ($posts instanceof \Illuminate\Pagination\LengthAwarePaginator)
+                <div class="pagination-wrapper">
+                    <div class="text-muted small mb-2">
+                        Showing {{ $posts->firstItem() ?? 0 }} to {{ $posts->lastItem() ?? 0 }} of {{ $posts->total() }} results
+                    </div>
+                    <nav aria-label="Posts pagination" class="w-100 d-flex justify-content-center">
+                        {{ $posts->appends(request()->query())->onEachSide(1)->links('pagination::bootstrap-5') }}
+                    </nav>
+                </div>
+            @endif
         </div>
-        
-        
+
+
 
         <a href="/add-question" class="custom-button">
             <div class="plus-symbol">+</div>
@@ -79,6 +90,16 @@
         .plus-symbol {
             color: black;
             font-size: 24px;
+        }
+
+        .pagination-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .pagination-wrapper .pagination {
+            margin-bottom: 0;
         }
     </style>
 @endsection
