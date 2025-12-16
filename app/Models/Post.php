@@ -14,7 +14,12 @@ class Post extends Model
         'programming_language_id',
         'post_id',
         'post_content',
-        'status'
+        'status',
+        'is_solution'
+    ];
+
+    protected $casts = [
+        'is_solution' => 'boolean',
     ];
 
     public function replies()

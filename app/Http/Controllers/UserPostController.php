@@ -103,15 +103,18 @@ class UserPostController extends Controller
     {
         $postId = $request->post_id;
         $userId = Auth::user()->id;
+        $post = Post::find($postId);
         $userLike = UserLike::where('user_id', $userId)->where('post_id', $postId)->first();
         if ($userLike) {
             $userLike->delete();
+            $post->user->decrement('lines', 1);
         }
         else {
             UserLike::create([
                 'user_id' => $userId,
                 'post_id' => $postId
             ]);
+            $post->user->increment('lines', 1);
         }
         return redirect('/post/'.$postId);
     }
