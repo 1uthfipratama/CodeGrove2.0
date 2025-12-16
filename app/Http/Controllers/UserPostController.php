@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Post;
 use App\Models\ProgrammingLanguage;
+use App\Models\User;
 use App\Models\UserLike;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -117,6 +118,69 @@ class UserPostController extends Controller
             $post->user->increment('lines', 1);
         }
         return redirect('/post/'.$postId);
+    }
+
+    public function markSolution(Request $request, $replyId)
+    {
+        $reply = Post::find($replyId);
+
+        if (!$reply) {
+            return redirect()->back()->with('error', 'Reply not found.');
+        }
+
+        $parentPost = Post::find($reply->post_id);
+
+        if (!$parentPost) {
+            return redirect()->back()->with('error', 'Parent post not found.');
+        }
+
+        if (!Auth::check() || $parentPost->user_id !== Auth::id()) {
+            return redirect()->back()->with('error', 'Unauthorized action.');
+        }
+
+        Post::where('post_id', $parentPost->id)->where('is_solution', true)->update(['is_solution' => false]);
+
+        $reply->is_solution = true;
+        $reply->save();
+
+        $replyAuthor = User::find($reply->user_id);
+
+        if ($replyAuthor) {
+            $replyAuthor->increment('lines', 5);
+        }
+
+        return redirect('/post/'.$parentPost->id);
+    }
+
+    public function unmarkSolution(Request $request, $replyId)
+    {
+        $reply = Post::find($replyId);
+
+        if (!$reply) {
+            return redirect()->back()->with('error', 'Reply not found.');
+        }
+
+        $parentPost = Post::find($reply->post_id);
+
+        if (!$parentPost) {
+            return redirect()->back()->with('error', 'Parent post not found.');
+        }
+
+        if (!Auth::check() || $parentPost->user_id !== Auth::id()) {
+            return redirect()->back()->with('error', 'Unauthorized action.');
+        }
+
+        $reply->is_solution = false;
+        $reply->save();
+
+        $replyAuthor = User::find($reply->user_id);
+
+        if ($replyAuthor) {
+            $newLines = max(0, $replyAuthor->lines - 5);
+            $replyAuthor->update(['lines' => $newLines]);
+        }
+
+        return redirect('/post/'.$parentPost->id);
     }
 
     public function viewEditPost(Request $request) {
