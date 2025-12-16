@@ -7,21 +7,68 @@
     <div class="bg-white">
         <div class="container mt-5 mb-5">
             <form action="/archived-questions" method="get" id="filterForm">
-            <div class="d-flex">
-                    <select class="form-select form-select-sm mb-4 me-2" aria-label="Small select example" name="sort" onchange="document.getElementById('filterForm').submit();">
-                        <option value="newToOld" {{ isset($sort) && $sort === 'newToOld' ? 'selected' : '' }}>Created Date (Newest to Oldest)</option>
-                        <option value="oldToNew" {{ isset($sort) && $sort === 'oldToNew' ? 'selected' : '' }}>Created Date (Oldest to Newest)</option>
-                        <option value="AZ" {{ isset($sort) && $sort === 'AZ' ? 'selected' : '' }}>A - Z</option>
-                        <option value="ZA" {{ isset($sort) && $sort === 'ZA' ? 'selected' : '' }}>Z - A</option>
-                    </select>
-                    <select class="form-select form-select-sm mb-4 ms-2" aria-label="Small select example" name="language" onchange="document.getElementById('filterForm').submit();">
-                        <option selected value={{-1}}>All</option>
-                        @foreach ($languages as $language)
-                            <option value={{$language->id}} {{ isset($selectedLanguage) && $selectedLanguage == $language->id ? 'selected' : '' }}>{{$language->programming_language_name}}</option>
-                        @endforeach
-                    </select>
+                <div class="filter-panel bg-light rounded p-3 shadow-sm">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap mb-3">
+                        <h5 class="mb-2 mb-md-0">Filters</h5>
+                    </div>
+                    <div class="row g-3 align-items-end">
+                        <div class="col-12 col-md-6 col-lg-5">
+                            <label class="form-label fw-semibold">Sort by:</label>
+                            <select class="form-select enhanced-select" aria-label="Sort posts" name="sort" onchange="document.getElementById('filterForm').submit();">
+                                <option value="newToOld" {{ isset($sort) && $sort === 'newToOld' ? 'selected' : '' }}>🕒 Newest First</option>
+                                <option value="oldToNew" {{ isset($sort) && $sort === 'oldToNew' ? 'selected' : '' }}>⏰ Oldest First</option>
+                                <option value="AZ" {{ isset($sort) && $sort === 'AZ' ? 'selected' : '' }}>🔤 A to Z</option>
+                                <option value="ZA" {{ isset($sort) && $sort === 'ZA' ? 'selected' : '' }}>🔤 Z to A</option>
+                            </select>
+                        </div>
+                        <div class="col-12 col-md-6 col-lg-5">
+                            <label class="form-label fw-semibold">Filter by Language:</label>
+                            <select class="form-select enhanced-select" aria-label="Filter by language" name="language" onchange="document.getElementById('filterForm').submit();">
+                                <option selected value={{-1}}>All</option>
+                                @foreach ($languages as $language)
+                                    <option value={{$language->id}} {{ isset($selectedLanguage) && $selectedLanguage == $language->id ? 'selected' : '' }}>{{$language->programming_language_name}}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
                 </div>
             </form>
+
+            @php
+                $sortLabel = 'Newest First';
+                if (isset($sort)) {
+                    $sortLabel = match($sort) {
+                        'oldToNew' => 'Oldest First',
+                        'AZ' => 'A to Z',
+                        'ZA' => 'Z to A',
+                        default => 'Newest First',
+                    };
+                }
+
+                $languageLabel = 'All Languages';
+                if (isset($selectedLanguage) && $selectedLanguage != -1) {
+                    $language = $languages->firstWhere('id', $selectedLanguage);
+                    $languageLabel = $language ? $language->programming_language_name : 'Selected Language';
+                }
+
+                $searchTerm = $search ?? null;
+
+                $isFiltered = ((isset($selectedLanguage) && $selectedLanguage != -1) || (isset($sort) && $sort !== 'newToOld') || (!empty($searchTerm)));
+            @endphp
+
+            <div class="alert alert-info d-flex flex-column flex-lg-row align-items-center justify-content-center text-center gap-2 position-relative">
+                <div class="d-flex flex-column flex-lg-row align-items-center justify-content-center gap-3">
+                    <div>📂 Viewing: {{ $languageLabel === 'All Languages' ? 'All Languages' : $languageLabel . ' Posts' }}</div>
+                    <div>🔄 Sorted by: {{ $sortLabel }}</div>
+                    @if(!empty($searchTerm))
+                        <div>🔍 Search results for: {{ $searchTerm }}</div>
+                    @endif
+                    <div>📊 {{ $posts->total() }} posts</div>
+                </div>
+                @if($isFiltered)
+                    <a href="{{ url()->current() }}" class="btn btn-outline-secondary btn-sm ms-lg-3 mt-2 mt-lg-0">Clear Filters</a>
+                @endif
+            </div>
             @foreach ($posts as $post)
                 <div class="card border border-secondary mb-4">
                     <div class="card-header bg-transparent border-0 d-flex justify-content-between align-items-center">
@@ -30,8 +77,26 @@
                             <span class="ms-2">{{$post->user->username}}</span>
                         </div>
                         <div class="d-flex align-items-center">
-                            <span class="badge bg-warning" style="margin-right: 10px">{{ucwords($post->status)}}</span>
-                            <span class="badge bg-success">{{$post->programmingLanguage->programming_language_name}}</span>
+                            <span class="badge bg-warning text-dark me-2">{{ucwords($post->status)}}</span>
+                            @php
+                                $languageName = $post->programmingLanguage->programming_language_name;
+                                $languageBadgeClass = 'bg-secondary';
+                                if ($languageName === 'C') {
+                                    $languageBadgeClass = 'bg-danger';
+                                } elseif ($languageName === 'Java') {
+                                    $languageBadgeClass = 'bg-warning text-dark';
+                                } elseif ($languageName === 'HTML') {
+                                    $languageBadgeClass = 'bg-info text-dark';
+                                } elseif ($languageName === 'JavaScript') {
+                                    $languageBadgeClass = 'bg-primary';
+                                } elseif ($languageName === 'Python') {
+                                    $languageBadgeClass = 'bg-success';
+                                }
+                            @endphp
+                            <span class="badge language-badge {{$languageBadgeClass}}">
+                                <img src="{{ asset('storage/'.$post->programmingLanguage->programming_language_image_path) }}" alt="{{$languageName}} icon" class="language-icon">
+                                {{$languageName}}
+                            </span>
                         </div>
                     </div>
                     <div class="card-body">
