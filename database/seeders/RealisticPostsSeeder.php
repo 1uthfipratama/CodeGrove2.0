@@ -6,7 +6,6 @@ use App\Models\Post;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Str;
 
 class RealisticPostsSeeder extends Seeder
 {
@@ -97,48 +96,40 @@ class RealisticPostsSeeder extends Seeder
 
         $replyExamples = [
             1 => [
-                'First check array bounds and null pointers; valgrind usually points to the exact crash site. If you share a minimal repro of ":question", we can sanity-check the pointer math.',
-                'calloc clears memory while malloc leaves it dirty. If you depend on zero-init, calloc is safer; otherwise, memset after malloc to avoid surprises in code like ":question".',
-                'Pointer arithmetic is done in element sizes, not bytes. Make sure your increments match the target type; otherwise you will walk off the buffer like you described in ":question".',
-                'Run AddressSanitizer or valgrind to find double frees or leaks. They will tell you which line of ":question" is mismanaging memory.',
-                'If fgets skips input after scanf, consume the trailing newline with getchar. It is a classic gotcha that shows up in snippets like ":question".',
+                'Segfaults often come from invalid pointers—use valgrind to see where it crashes and check your array bounds.',
+                'calloc zeroes memory while malloc does not. If you rely on zero-init, use calloc or manually memset.',
+                'Pointer arithmetic must use the right type size; make sure you increment by elements, not bytes.',
+                'Use tools like valgrind or AddressSanitizer to track memory leaks and invalid frees.',
+                'If fgets is skipped, consume the trailing newline from prior scanf calls using getchar or similar.',
             ],
             2 => [
-                'Guard everything with Optional.ofNullable and fail fast. For ":question" it helps to log the offending field before dereferencing it.',
-                'ArrayList wins for random access while LinkedList is good for frequent mid-list inserts. Pick based on how ":question" manipulates the collection.',
-                'Read files with Files.readAllLines or BufferedReader inside try-with-resources. It keeps the code in ":question" tidy and closes handles automatically.',
-                'ConcurrentModificationException usually means you mutated during iteration. Use iterators or collect() before modifying the list mentioned in ":question".',
-                'Format dates with DateTimeFormatter and the java.time API. It is safer and avoids timezone surprises the old Date API causes in ":question".',
+                'Wrap suspicious code in Optional.ofNullable and handle the empty case to avoid NPEs.',
+                'ArrayList is better for random access; LinkedList for many inserts/removals in the middle.',
+                'Use Files.readAllLines or BufferedReader in a try-with-resources block for safe file reading.',
+                'ConcurrentModificationException occurs when modifying while iterating—use iterators or streams that copy first.',
+                'Use java.time.format.DateTimeFormatter to format dates reliably.',
             ],
             3 => [
-                'Center the container with display:flex on the parent and use justify-content/align-items center. That usually fixes layouts like ":question".',
-                '<div> is block-level while <span> is inline. Use spans for inline tweaks and divs for structure—mixing them is what breaks layouts like ":question".',
-                'For a responsive navbar, lean on flexbox with media queries or Bootstrap utilities. The issue in ":question" sounds like missing breakpoints.',
-                'CSS grid with repeat(auto-fit, minmax()) builds fluid galleries. It will stop the overflow you described in ":question".',
-                'Prefer CSS variables and prefers-color-scheme to toggle dark mode. It keeps theming simple for pages like ":question".',
+                'Center a div with display:flex; justify-content:center; align-items:center on the parent.',
+                '<div> is block-level while <span> is inline. Use them according to layout needs.',
+                'Use Bootstrap navbar components or CSS flexbox with media queries for responsiveness.',
+                'CSS grid with repeat(auto-fit,minmax()) helps build responsive galleries.',
+                'Use prefers-color-scheme media query to toggle dark mode variables.',
             ],
             4 => [
-                '"undefined is not a function" means the reference is missing. Console.log the variable and confirm the export/import path you used in ":question".',
-                'Use const for values that never change and let for mutable ones; var is function-scoped and causes hoisting bugs like the one in ":question".',
-                'Wrap awaits in try/catch and mark the function async. Otherwise promises will bubble errors silently like they do in ":question".',
-                'Debounce with setTimeout and clearTimeout inside the wrapper. It keeps the handler in ":question" from firing excessively.',
-                'CORS errors mean the server is blocking the origin. Ensure the API used in ":question" sends proper headers and preflight responses.',
+                'That error usually means the variable is undefined—log it before calling to confirm the function exists.',
+                'let/const are block-scoped while var is function-scoped; prefer const for values that do not change.',
+                'Wrap await in try/catch and ensure the function is declared async.',
+                'Debounce by wrapping the function with setTimeout and clearing previous timers on each call.',
+                'Use fetch with proper headers and confirm the server allows the origin to resolve CORS.',
             ],
             5 => [
-                'IndentationError usually means tabs and spaces got mixed. Configure your editor for spaces-only and re-indent the block you showed in ":question".',
-                'Lists are mutable while tuples are immutable; choose tuples when you need hashable keys or fixed data like the config in ":question".',
-                'Use pandas.read_csv for convenience or csv.reader for small files. Wrap it in with open(...) as fh to avoid file handle leaks like in ":question".',
-                'asyncio.gather speeds up IO-bound work. In ":question" you can await multiple API calls instead of sequential requests.',
-                'Activate a venv before installing packages so dependencies for code like ":question" stay isolated.',
+                'IndentationError often comes from mixing tabs and spaces—configure your editor to use spaces only.',
+                'Lists are mutable, tuples are immutable—use tuples for fixed data.',
+                'Use pandas.read_csv for convenience or csv.reader for lightweight parsing.',
+                'Asyncio.gather can speed up IO-bound API calls when used with async HTTP clients.',
+                'Use venv or virtualenv and activate it before installing packages to avoid conflicts.',
             ],
-        ];
-
-        $conversationClosers = [
-            'Let me know if that works or share a small snippet and we can dig deeper.',
-            'Hope this helps—drop a stack trace or screenshot if the bug persists.',
-            'That pattern usually clears things up; if it does not, post your minimal repro.',
-            'I fixed a similar issue last week using this approach. Curious if it works for you too.',
-            'Shout if you need a more detailed example; always happy to pair on tricky bugs.',
         ];
 
         $createdQuestions = collect();
@@ -160,7 +151,7 @@ class RealisticPostsSeeder extends Seeder
                     'updated_at' => $createdAt,
                 ]);
 
-                $this->createReplies($question, $users, $replyExamples[$languageId], $conversationClosers);
+                $this->createReplies($question, $users, $replyExamples[$languageId]);
                 $createdQuestions->push($question);
             }
         }
@@ -168,7 +159,7 @@ class RealisticPostsSeeder extends Seeder
         $this->markSolvedReplies($createdQuestions);
     }
 
-    private function createReplies(Post $question, $users, array $replyExamples, array $conversationClosers): void
+    private function createReplies(Post $question, $users, array $replyExamples): void
     {
         $replyCount = random_int(2, 5);
         $availableUsers = $users->where('id', '!=', $question->user_id);
@@ -178,29 +169,17 @@ class RealisticPostsSeeder extends Seeder
             $replyCreatedAt = $question->created_at->copy()->addMinutes(random_int(10, 10080));
             $replyCreatedAt = $replyCreatedAt->greaterThan(Carbon::now()) ? Carbon::now() : $replyCreatedAt;
 
-            $replyContent = $this->formatReply($replyExamples[array_rand($replyExamples)], $question->post_content);
-
-            if (random_int(0, 1) === 1) {
-                $replyContent .= ' ' . $conversationClosers[array_rand($conversationClosers)];
-            }
-
             Post::create([
                 'user_id' => $replyAuthor->id,
                 'programming_language_id' => $question->programming_language_id,
                 'post_id' => $question->id,
-                'post_content' => $replyContent,
+                'post_content' => $replyExamples[array_rand($replyExamples)],
                 'status' => 'active',
                 'is_solution' => false,
                 'created_at' => $replyCreatedAt,
                 'updated_at' => $replyCreatedAt,
             ]);
         }
-    }
-
-    private function formatReply(string $template, string $questionContent): string
-    {
-        $shortQuestion = Str::limit($questionContent, 120, '...');
-        return str_replace(':question', $shortQuestion, $template);
     }
 
     private function markSolvedReplies($questions): void

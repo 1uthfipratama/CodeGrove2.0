@@ -23,7 +23,7 @@ class HomeController extends Controller
         $sort = $request->sort;
         $selectedLanguage = $request->language;
 
-        $postsQuery = Post::where('status', 'active')->withCount('replies');
+        $postsQuery = Post::where('status', 'active');
 
         if ($selectedLanguage && $selectedLanguage != -1) {
             $postsQuery = $postsQuery->where('programming_language_id', $selectedLanguage);
@@ -59,9 +59,7 @@ class HomeController extends Controller
                         ->count();
         }
         $searchTerm = $request->input('search');
-        $posts = Post::where('post_content', 'LIKE', '%' . $searchTerm . '%')->where('status', 'active')
-            ->withCount('replies')
-            ->paginate(10);
+        $posts = Post::where('post_content', 'LIKE', '%' . $searchTerm . '%')->where('status', 'active')->paginate(10);
         $languages = ProgrammingLanguage::all();
         $sort = $request->sort;
         $selectedLanguage = $request->language;
@@ -81,7 +79,7 @@ class HomeController extends Controller
         $sort = $request->sort;
         $selectedLanguage = $request->language;
 
-        $postsQuery = Post::query()->withCount('replies');
+        $postsQuery = Post::query();
 
         if ($selectedLanguage && $selectedLanguage != -1) {
             $postsQuery = $postsQuery->where('programming_language_id', $selectedLanguage);
@@ -118,9 +116,7 @@ class HomeController extends Controller
         }
         
         $searchTerm = $request->input('search');
-        $posts = Post::where('post_content', 'LIKE', '%' . $searchTerm . '%')
-            ->withCount('replies')
-            ->paginate(10);
+        $posts = Post::where('post_content', 'LIKE', '%' . $searchTerm . '%')->paginate(10);
         $languages = ProgrammingLanguage::all();
         $sort = $request->sort;
         $selectedLanguage = $request->language;
@@ -141,7 +137,7 @@ class HomeController extends Controller
         $sort = $request->sort;
         $selectedLanguage = $request->language;
 
-        $postsQuery = Post::where('status', 'active')->where('user_id', $userId)->withCount('replies');
+        $postsQuery = Post::where('status', 'active')->where('user_id', $userId);
 
         if ($selectedLanguage && $selectedLanguage != -1) {
             $postsQuery = $postsQuery->where('programming_language_id', $selectedLanguage);
@@ -180,9 +176,7 @@ class HomeController extends Controller
 
         $searchTerm = $request->input('search');
         $posts = Post::where('post_content', 'LIKE', '%' . $searchTerm . '%')->where('status', 'active')
-                    ->where('user_id', $userId)
-                    ->withCount('replies')
-                    ->paginate(10);
+                    ->where('user_id', $userId)->paginate(10);
         $languages = ProgrammingLanguage::all();
         $sort = $request->sort;
         $selectedLanguage = $request->language;
@@ -203,7 +197,7 @@ class HomeController extends Controller
         $sort = $request->sort;
         $selectedLanguage = $request->language;
 
-        $postsQuery = Post::where('status', 'archived')->where('user_id', $userId)->withCount('replies');
+        $postsQuery = Post::where('status', 'archived')->where('user_id', $userId);
 
         if ($selectedLanguage && $selectedLanguage != -1) {
             $postsQuery = $postsQuery->where('programming_language_id', $selectedLanguage);
@@ -242,9 +236,7 @@ class HomeController extends Controller
 
         $searchTerm = $request->input('search');
         $posts = Post::where('post_content', 'LIKE', '%' . $searchTerm . '%')
-                    ->where('user_id', $userId)->where('status', 'archived')
-                    ->withCount('replies')
-                    ->paginate(10);
+                    ->where('user_id', $userId)->where('status', 'archived')->paginate(10);
         $languages = ProgrammingLanguage::all();
         $sort = $request->sort;
         $selectedLanguage = $request->language;
