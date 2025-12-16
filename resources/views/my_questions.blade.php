@@ -37,7 +37,18 @@
                     <div class="card-body">
                         <p class="card-text">{{$post->post_content}}</p>
                         <hr class="my-4">
-                        <a href="/post/{{$post->id}}" class="card-link">View all replies...</a>
+                        <div class="d-flex align-items-center justify-content-between flex-wrap">
+                            <a href="/post/{{$post->id}}" class="card-link">View all replies...</a>
+                            <span class="badge bg-secondary text-muted ms-2 mt-2 mt-sm-0">
+                                @if($post->replies_count === 0)
+                                    💬 No replies yet
+                                @elseif($post->replies_count === 1)
+                                    💬 1 reply
+                                @else
+                                    💬 {{ $post->replies_count }} replies
+                                @endif
+                            </span>
+                        </div>
                     </div>
                 </div>
             @endforeach
