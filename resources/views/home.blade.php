@@ -28,6 +28,7 @@
                         <div class="d-flex align-items-center" style="margin-top: 10px">
                             <img src="{{ asset('storage/images/'.$post->user->display_picture_path) }}" class="rounded-circle" width="40" height="40" alt="User Image">
                             <span class="ms-2">{{$post->user->username}}</span>
+                            <small class="text-muted ms-2">(🔥 {{$post->user->lines}} lines)</small>
                         </div>
                         <div class="d-flex align-items-center">
                             <span class="badge bg-warning" style="margin-right: 10px">{{ucwords($post->status)}}</span>
