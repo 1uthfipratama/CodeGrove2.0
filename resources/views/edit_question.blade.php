@@ -1,39 +1,32 @@
 @extends('template')
 
 @section('title', 'Edit Question')
-    
+
 @section('content')
     @include('navbar')
-    <div class="container mt-5">
-        <h1 class="mb-4">Edit Question</h1>
-        <form action="/edit-post/{{$question->id}}" method="post">
-            @csrf
-            <div class="row">
-                <label for="question" class="col-sm-2 col-form-label">Question</label>
-                <div class="col-sm-10">
-                    <textarea class="form-control" id="question" rows="10" name="question">{{$question->post_content}}</textarea>
+    <main class="cg-container">
+        <div class="cg-card cg-form">
+            <h2 class="mb-3">Update your question</h2>
+            <p class="text-muted">Improve clarity, add missing details, or adjust your language selection.</p>
+            <form action="/edit-post/{{ $post->id }}" method="post">
+                @csrf
+                <div class="mb-3">
+                    <label for="question" class="form-label">Question</label>
+                    <textarea class="cg-textarea" id="question" rows="6" name="question">{{$post->post_content}}</textarea>
                 </div>
-            </div>
-            <div class="row mt-3">
-                <label for="programming-language" class="col-sm-2 col-form-label">Programming Language</label>
-                <div class="col-sm-10">
-                    <select class="form-select" id="programming-language" name="language">
-                        <option selected>Select Language</option>
+                <div class="mb-3">
+                    <label for="programming-language" class="form-label">Programming Language</label>
+                    <select class="cg-select" id="programming-language" name="language">
                         @foreach ($languages as $lang)
-                            @if ($lang->id == $question->programmingLanguage->id)
-                                <option value="{{$lang->id}}" selected>{{$lang->programming_language_name}}</option>
-                            @else
-                                <option value="{{$lang->id}}">{{$lang->programming_language_name}}</option>
-                            @endif
+                            <option value="{{$lang->id}}" {{ $post->programmingLanguage->id == $lang->id ? 'selected' : '' }}>{{$lang->programming_language_name}}</option>
                         @endforeach
                     </select>
                 </div>
-            </div>
-            <div class="row mt-4">
-                <div class="col-sm-10 offset-sm-2">
-                    <button type="submit" class="btn btn-primary float-end">Edit Question</button>
+                <div class="d-flex justify-content-end gap-2">
+                    <a href="/post/{{$post->id}}" class="cg-btn-secondary">Cancel</a>
+                    <button type="submit" class="cg-btn-primary">Save Changes</button>
                 </div>
-            </div>
-        </form>
-    </div>
+            </form>
+        </div>
+    </main>
 @endsection

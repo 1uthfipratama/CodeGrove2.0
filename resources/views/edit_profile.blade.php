@@ -4,44 +4,46 @@
 
 @section('content')
     @include('navbar')
-    <div class="container mt-5">
-        @if (isset($errors))
-            @foreach ($errors as $item)
-                {{$item}}
-            @endforeach
-        @endif
-        <h1>Edit Profile</h1>
-        <form method="POST" action="/edit-profile" enctype="multipart/form-data">
-            @csrf
-            <div class="mb-3">
-                <input type="file" class="form-control visually-hidden" id="profile_picture" name="profile_picture" onchange="displayImage(this)">
-                <label for="profile_picture" class="profile-picture">
-                    <img src="{{ asset($profile_picture) }}" class="rounded-circle" alt="Profile Picture" width="200" height="200">
-                </label>
-            </div>
-            <div class="mb-3">
-                <label for="username" class="form-label">Username</label>
-                <input type="text" class="form-control" id="username" name="username" value="{{ Auth::user()->username }}" disabled>
-            </div>
-            <div class="mb-3">
-                <label for="email" class="form-label">Email</label>
-                <input type="email" class="form-control" id="email" name="email" value="{{ Auth::user()->email }}" disabled>
-            </div>
-            <div class="mb-3">
-                <label for="old_password" class="form-label">Old Password</label>
-                <input type="password" class="form-control" id="old_password" name="old_password">
-            </div>
-            <div class="mb-3">
-                <label for="new_password" class="form-label">New Password</label>
-                <input type="password" class="form-control" id="new_password" name="new_password">
-            </div>
-            <div class="mb-3">
-                <label for="dob" class="form-label">Date of Birth</label>
-                <input type="date" class="form-control" id="dob" name="dob" value="{{ Auth::user()->dob }}">
-            </div>
-            <button type="submit" class="btn btn-primary">Save</button>
-        </form>
-    </div>
+    <main class="cg-container">
+        <div class="cg-card cg-form">
+            <h2 class="mb-3">Edit Profile</h2>
+            <p class="text-muted">Refresh your avatar, change your password, or update your birthday.</p>
+            <form method="POST" action="/edit-profile" enctype="multipart/form-data">
+                @csrf
+                <div class="mb-3 text-center">
+                    <input type="file" class="form-control visually-hidden" id="profile_picture" name="profile_picture" onchange="displayImage(this)">
+                    <label for="profile_picture" class="d-inline-block">
+                        <img src="{{ asset($profile_picture) }}" class="cg-profile-avatar" alt="Profile Picture" width="150" height="150">
+                        <div class="small text-muted mt-2">Tap to update photo</div>
+                    </label>
+                </div>
+                <div class="mb-3">
+                    <label for="username" class="form-label">Username</label>
+                    <input type="text" class="cg-input" id="username" name="username" value="{{ Auth::user()->username }}" disabled>
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" class="cg-input" id="email" name="email" value="{{ Auth::user()->email }}" disabled>
+                </div>
+                <div class="mb-3">
+                    <label for="old_password" class="form-label">Old Password</label>
+                    <input type="password" class="cg-input" id="old_password" name="old_password">
+                </div>
+                <div class="mb-3">
+                    <label for="new_password" class="form-label">New Password</label>
+                    <input type="password" class="cg-input" id="new_password" name="new_password">
+                </div>
+                <div class="mb-3">
+                    <label for="dob" class="form-label">Date of Birth</label>
+                    <input type="date" class="cg-input" id="dob" name="dob" value="{{ Auth::user()->dob }}">
+                </div>
+                <div class="d-flex justify-content-end gap-2">
+                    <a href="/profile" class="cg-btn-secondary">Cancel</a>
+                    <button type="submit" class="cg-btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+    </main>
 
     <script>
         function displayImage(input) {
