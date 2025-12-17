@@ -87,7 +87,7 @@
             @foreach ($posts as $post)
                 @php
                     $languageName = $post->programmingLanguage->programming_language_name;
-                    $likesCount = $post->likes_count ?? ($post->likes?->count() ?? 0);
+                    $likesCount = $post->likes_count ?? ($post->likes->count() ?? 0);
                 @endphp
                 <article class="cg-card cg-post-card position-relative">
                     <div class="d-flex justify-content-between align-items-start mb-3">
