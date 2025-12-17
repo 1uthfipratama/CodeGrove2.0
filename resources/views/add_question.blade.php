@@ -1,35 +1,34 @@
 @extends('template')
 
 @section('title', 'Add Question')
-    
+
 @section('content')
     @include('navbar')
-    <div class="container mt-5">
-        <h1 class="mb-4">Add Question</h1>
-        <form action="/add-question" method="post">
-            @csrf
-            <div class="row">
-                <label for="question" class="col-sm-2 col-form-label">Question</label>
-                <div class="col-sm-10">
-                    <textarea class="form-control" id="question" rows="10" name="question" value="{{old('question')}}"></textarea>
+    <main class="cg-container">
+        <div class="cg-card cg-form">
+            <h2 class="mb-3">Start a new discussion</h2>
+            <p class="text-muted">Share your question with the community. Use clear language and pick the right programming language.</p>
+            <form action="/add-question" method="post">
+                @csrf
+                <div class="mb-3">
+                    <label for="question" class="form-label">Question</label>
+                    <textarea class="cg-textarea" id="question" rows="6" name="question" placeholder="Describe your problem in detail...">{{old('question')}}</textarea>
                 </div>
-            </div>
-            <div class="row mt-3">
-                <label for="programming-language" class="col-sm-2 col-form-label">Programming Language</label>
-                <div class="col-sm-10">
-                    <select class="form-select" id="programming-language" name="language">
+                <div class="mb-3">
+                    <label for="programming-language" class="form-label">Programming Language</label>
+                    <select class="cg-select" id="programming-language" name="language">
                         <option selected>Select Language</option>
                         @foreach ($languages as $lang)
                             <option value="{{$lang->id}}">{{$lang->programming_language_name}}</option>
                         @endforeach
                     </select>
                 </div>
-            </div>
-            <div class="row mt-4">
-                <div class="col-sm-10 offset-sm-2">
-                    <button type="submit" class="btn btn-primary float-end">Add Question</button>
+                <div class="d-flex justify-content-end gap-2">
+                    <a href="/" class="cg-btn-secondary">Cancel</a>
+                    <button type="submit" class="cg-btn-primary">Add Question</button>
                 </div>
-            </div>
-        </form>
-    </div>
+            </form>
+        </div>
+    </main>
+    <a href="/add-question" class="cg-fab visible" id="cgFab" aria-label="Add Question">+</a>
 @endsection
