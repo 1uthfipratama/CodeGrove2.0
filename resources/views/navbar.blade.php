@@ -1,106 +1,110 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container-fluid justify-content-between">
-        <a class="navbar-brand" href="/">
-            Codegrove
-        </a>
-        @if (@isset($sourceUrl))
-            <form class="d-flex" role="search" action="{{$sourceUrl}}/search" method="post">
-                @csrf
-                @if (isset($search))
-                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="search" value="{{$search}}">
-                @else
-                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="search">
-                @endif
-                <button class="btn btn-outline-success" type="submit">Search</button>
-            </form>
-        @else
-            <form class="d-flex" role="search" action="search" method="post">
-                @csrf
-                @if (isset($search))
-                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="search" value="{{$search}}">
-                @else
-                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="search">
-                @endif
-                <button class="btn btn-outline-success" type="submit">Search</button>
-            </form>
-        @endif
-        
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-    </div>
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0" style="margin-left: 30px">
-            @if (Auth::user())
-                @if (Auth::user()->role == "user")
-                    <li class="nav-item d-lg-none">
-                        <a class="nav-link" aria-current="page" href="/my-questions" style="margin-left: 20px">My Questions</a>
-                    </li>
-                    <li class="nav-item d-lg-none">
-                        <a class="nav-link d-flex" aria-current="page" href="/archived-questions" style="margin-left: 20px">
-                            Archived Questions
-                            <div class="d-flex justify-content-center align-items-center bg-danger text-white rounded" style="height: max-content; width: max-content; font-size: 10px; padding-left: 5px; padding-right: 5px; margin-left: 5px;">
-                                {{$archiveCount}}
-                            </div>
-                        </a>
-                    </li>
-                @endif
-                <li class="nav-item d-lg-none">
-                    <a class="nav-link" aria-current="page" href="/profile" style="margin-left: 20px">Profile</a>
-                </li>
-                <li class="nav-item d-lg-none">
-                    <form action="/logout" method="post" id="logout-form1">
-                        @csrf
-                        <button type="submit" class="btn nav-link" style="margin-left: 20px">Log Out</button>
-                    </form>
-                </li>
+<nav class="navbar navbar-expand-lg cg-navbar">
+    <div class="container-fluid px-4">
+        <div class="d-flex align-items-center gap-3">
+            <button class="navbar-toggler border-0" type="button" id="cgMenuToggle" aria-label="Open menu">
+                <span data-feather="menu"></span>
+            </button>
+            <a class="navbar-brand cg-logo" href="/">CodeGrove</a>
+        </div>
+
+        <div class="cg-search d-none d-lg-block">
+            @if (@isset($sourceUrl))
+                <form class="position-relative" role="search" action="{{$sourceUrl}}/search" method="post">
+                    @csrf
+                    <span data-feather="search"></span>
+                    <input class="form-control" type="search" placeholder="Search discussions" aria-label="Search" name="search" value="{{ $search ?? '' }}">
+                </form>
             @else
-                <li class="nav-item d-lg-none">
-                    <a class="nav-link" aria-current="page" href="/login">Login</a>
-                </li>
-                <li class="nav-item d-lg-none">
-                    <a class="nav-link" aria-current="page" href="/register">Register</a>
-                </li>
-            @endif    
-        </ul>
-        <ul class="navbar-nav mb-2 mb-lg-0 d-flex align-items-center" style="width: max-content">
+                <form class="position-relative" role="search" action="search" method="post">
+                    @csrf
+                    <span data-feather="search"></span>
+                    <input class="form-control" type="search" placeholder="Search discussions" aria-label="Search" name="search" value="{{ $search ?? '' }}">
+                </form>
+            @endif
+        </div>
+
+        <div class="d-flex align-items-center gap-3">
+            <div class="form-check form-switch mb-0">
+                <input class="form-check-input" type="checkbox" role="switch" id="cgDarkToggle" aria-label="Toggle dark mode">
+            </div>
+            @if (Auth::user())
+                <a class="position-relative" href="/profile">
+                    @if (Auth::user()->display_picture_path)
+                        <img src="{{ asset('storage/images/'.Auth::user()->display_picture_path) }}" class="cg-profile-img" alt="Profile Picture">
+                    @else
+                        <img src="{{ asset('storage/asset/gg--profile.png') }}" class="cg-profile-img" alt="Profile Picture">
+                    @endif
+                </a>
+            @endif
+            <button class="navbar-toggler border-0 d-lg-none" type="button" data-bs-toggle="collapse" data-bs-target="#cgNav" aria-controls="cgNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span data-feather="chevron-down"></span>
+            </button>
+        </div>
+    </div>
+
+    <div class="collapse navbar-collapse" id="cgNav">
+        <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2 px-3 py-2 py-lg-0">
             @if (Auth::user())
                 @if (Auth::user()->role == "user")
-                    <li class="nav-item d-none d-lg-block">
-                        <a class="nav-link" aria-current="page" href="/my-questions">My Questions</a>
-                    </li>
-                    <li class="nav-item d-none d-lg-block">
-                        <a class="nav-link d-flex" aria-current="page" href="/archived-questions">
-                            Archived Questions
-                            <div class="d-flex justify-content-center align-items-center bg-danger text-white rounded" style="height: max-content; width: max-content; font-size: 10px; padding-left: 5px; padding-right: 5px; margin-left: 5px;">
-                                {{$archiveCount}}
-                            </div>
+                    <li class="nav-item"><a class="nav-link" href="/my-questions">My Questions</a></li>
+                    <li class="nav-item">
+                        <a class="nav-link d-flex align-items-center gap-2" href="/archived-questions">
+                            Archived
+                            <span class="badge bg-danger">{{$archiveCount}}</span>
                         </a>
                     </li>
-                    @endif
-                <li class="nav-item d-none d-lg-block">
+                @endif
+                <li class="nav-item"><a class="nav-link" href="/plans">Plans</a></li>
+                <li class="nav-item"><a class="nav-link" href="/profile">Profile</a></li>
+                <li class="nav-item">
                     <form action="/logout" method="post" id="logout-form2">
                         @csrf
                         <button type="submit" class="btn nav-link">Log Out</button>
                     </form>
                 </li>
-                <li class="nav-item d-none d-lg-block">
-                    <a class="nav-link" aria-current="page" href="/profile">
-                        @if (Auth::user()->display_picture_path)
-                            <img src="{{ asset('storage/images/'.Auth::user()->display_picture_path) }}" class="rounded-circle" alt="Profile Picture" width="30" height="30">
-                        @else
-                            <img src="{{ asset('storage/asset/gg--profile.png') }}" class="rounded-circle" alt="Profile Picture" width="30" height="30">
-                        @endif
-                    </a>
-                </li>
             @else
-                <li class="nav-item d-none d-lg-block">
-                    <a class="nav-link" aria-current="page" href="/login">Login</a>
-                </li>
-                <li class="nav-item d-none d-lg-block">
-                    <a class="nav-link" aria-current="page" href="/register">Register</a>
-                </li>
-            @endif    
+                <li class="nav-item"><a class="nav-link" href="/login">Login</a></li>
+                <li class="nav-item"><a class="nav-link" href="/register">Register</a></li>
+            @endif
         </ul>
+        <div class="cg-search d-lg-none w-100 px-3 pb-3">
+            @if (@isset($sourceUrl))
+                <form class="position-relative" role="search" action="{{$sourceUrl}}/search" method="post">
+                    @csrf
+                    <span data-feather="search"></span>
+                    <input class="form-control" type="search" placeholder="Search discussions" aria-label="Search" name="search" value="{{ $search ?? '' }}">
+                </form>
+            @else
+                <form class="position-relative" role="search" action="search" method="post">
+                    @csrf
+                    <span data-feather="search"></span>
+                    <input class="form-control" type="search" placeholder="Search discussions" aria-label="Search" name="search" value="{{ $search ?? '' }}">
+                </form>
+            @endif
+        </div>
     </div>
 </nav>
+
+<div id="cgMobileOverlay" class="cg-mobile-overlay"></div>
+<div id="cgMobileMenu" class="cg-mobile-menu">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <span class="fw-bold">Menu</span>
+        <button class="btn btn-sm btn-outline-secondary cg-close-menu" type="button">Close</button>
+    </div>
+    <div class="list-group list-group-flush">
+        @if (Auth::user())
+            <a href="/" class="list-group-item list-group-item-action cg-close-menu">Home</a>
+            <a href="/my-questions" class="list-group-item list-group-item-action cg-close-menu">My Questions</a>
+            <a href="/archived-questions" class="list-group-item list-group-item-action cg-close-menu">Archived ({{$archiveCount}})</a>
+            <a href="/plans" class="list-group-item list-group-item-action cg-close-menu">Plans</a>
+            <a href="/profile" class="list-group-item list-group-item-action cg-close-menu">Profile</a>
+            <form action="/logout" method="post" class="list-group-item">
+                @csrf
+                <button type="submit" class="btn w-100 cg-btn-secondary">Log Out</button>
+            </form>
+        @else
+            <a href="/login" class="list-group-item list-group-item-action cg-close-menu">Login</a>
+            <a href="/register" class="list-group-item list-group-item-action cg-close-menu">Register</a>
+        @endif
+    </div>
+</div>

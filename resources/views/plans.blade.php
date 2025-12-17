@@ -4,53 +4,36 @@
 
 @section('content')
     @include('navbar')
-    <div class="container mt-5 d-flex flex-column align-items-center">
-        <h1 class="mb-4">Subscription Plans</h1>
-        <form class="d-flex flex-column align-items-center" action="/plans" method="POST">
+    <main class="cg-container d-flex flex-column align-items-center">
+        <section class="cg-hero mb-4 w-100">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3">
+                <div>
+                    <div class="cg-hero-title">Pick your perfect plan</div>
+                    <div class="cg-hero-subtitle">Unlock premium perks, faster replies, and exclusive badges.</div>
+                </div>
+            </div>
+        </section>
+
+        <form class="w-100" action="/plans" method="POST">
             @csrf
-            <div class="container d-flex justify-content-center mb-4">
+            <div class="cg-plan-grid mb-4">
                 @foreach ($subs as $sub)
-                    <div class="card border-primary mb-3" style="width: 250px; margin: 20px; cursor: pointer;" onclick="selectSubscription({{$sub->id}})">
-                        <div class="card-body d-flex flex-column align-items-center" style="text-align: center">
-                            <h5 class="card-title fw-bold">{{$sub->subscription_name}}</h5>
-                            <p class="card-text">{{$sub->subscription_description}}</p>
-                            <p class="card-text fw-bold text-warning">Rp {{$sub->subscription_price}},-</p>
-                            <input type="radio" id="subscription{{$sub->id}}" name="subscription_id" value="{{$sub->id}}" style="display: none">
+                    <label class="cg-card cg-plan-card" onclick="document.getElementById('subscription{{$sub->id}}').checked = true; this.classList.add('active')">
+                        <input type="radio" id="subscription{{$sub->id}}" name="subscription_id" value="{{$sub->id}}" class="d-none">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <h5 class="fw-bold mb-0">{{$sub->subscription_name}}</h5>
+                            <span class="cg-status-badge cg-status-active">Popular</span>
                         </div>
-                    </div>
+                        <p class="text-muted">{{$sub->subscription_description}}</p>
+                        <div class="cg-price">Rp {{$sub->subscription_price}},-</div>
+                    </label>
                 @endforeach
             </div>
-            <div class="mb-3" style="width: 80%">
-                <input type="text" class="form-control mb-4" placeholder="Enter your bank account number..." name="account_no">
-                <button type="submit" class="btn btn-primary" style="width: 100%">Start Plan</button>
+            <div class="cg-card cg-form">
+                <label class="form-label">Bank account number</label>
+                <input type="text" class="cg-input mb-3" placeholder="Enter your bank account number..." name="account_no">
+                <button type="submit" class="cg-btn-primary w-100">Start Plan</button>
             </div>
         </form>
-    </div>
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            // Remove the border-primary class from all card elements
-            document.querySelectorAll('.card').forEach(card => {
-                card.classList.remove('border-primary');
-            });
-        });
-
-        function selectSubscription(id) {
-            // Deselect all subscriptions
-            document.querySelectorAll('.card').forEach(card => {
-                card.classList.remove('border-primary');
-            });
-            
-            // Select the clicked subscription
-            document.getElementById('subscription' + id).checked = true;
-            console.log(id);
-            event.currentTarget.classList.add('border-primary');
-            
-            document.querySelectorAll('input[name="subscription_id"]').forEach(input => {
-                if (input.value != id) {
-                    console.log(input.value);
-                    input.checked = false;
-                }
-            });
-        }
-    </script>
+    </main>
 @endsection
