@@ -47,6 +47,16 @@
             <div class="mb-3">
                 <label class="form-label">Confirm Password</label>
                 <input type="password" class="cg-input" name="password_confirmation" required>
+                @error('password_confirmation')
+                    <div class="cg-error">{{ $message }}</div>
+                @enderror
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Date of Birth</label>
+                <input type="date" class="cg-input" name="dob" value="{{ old('dob') }}" required>
+                @error('dob')
+                    <div class="cg-error">{{ $message }}</div>
+                @enderror
             </div>
             <button class="cg-btn-primary w-100" type="submit">Register</button>
         </form>
