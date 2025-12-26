@@ -6,6 +6,11 @@
     <div class="container-fluid bg-dark" style="height: 100vh; position: relative; overflow: hidden;">
         <div class="row justify-content-center align-items-center" style="height: 100%;">
             <div class="d-flex justify-content-center align-items-center" style="position: relative; z-index: 999;">
+                @if (session('success'))
+                    <div class="alert alert-success position-absolute top-0 start-50 translate-middle-x mt-3 w-75 text-center">
+                        {{ session('success') }}
+                    </div>
+                @endif
                 <form id="cardForm" action="{{ route('select-language', ['userId' => $userId]) }}" method="POST" class="row align-items-center justify-content-center">
                     @csrf
                     <div class="d-flex justify-content-center align-items-center">
