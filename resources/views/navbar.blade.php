@@ -55,7 +55,6 @@
                     </li>
                 @endif
                 <li class="nav-item"><a class="nav-link" href="/plans">Plans</a></li>
-                <li class="nav-item"><a class="nav-link" href="/profile">Profile</a></li>
                 <li class="nav-item">
                     <form action="/logout" method="post" id="logout-form2">
                         @csrf
@@ -97,7 +96,6 @@
             <a href="/my-questions" class="list-group-item list-group-item-action cg-close-menu">My Questions</a>
             <a href="/archived-questions" class="list-group-item list-group-item-action cg-close-menu">Archived ({{$archiveCount}})</a>
             <a href="/plans" class="list-group-item list-group-item-action cg-close-menu">Plans</a>
-            <a href="/profile" class="list-group-item list-group-item-action cg-close-menu">Profile</a>
             <form action="/logout" method="post" class="list-group-item">
                 @csrf
                 <button type="submit" class="btn w-100 cg-btn-secondary">Log Out</button>
