@@ -10,15 +10,25 @@
         <form action="/login" method="post" class="cg-form">
             @csrf
             <div class="mb-3 position-relative">
-                <label class="form-label">Email</label>
-                <input type="email" class="cg-input" name="email" placeholder="you@example.com" required>
+                <label class="form-label">Username</label>
+                <input
+                    type="text"
+                    class="cg-input"
+                    name="username"
+                    placeholder="your_username"
+                    value="{{ old('username') }}"
+                    required
+                >
+                @error('username')
+                    <div class="cg-error">{{ $message }}</div>
+                @enderror
             </div>
             <div class="mb-3 position-relative">
                 <label class="form-label">Password</label>
                 <input type="password" class="cg-input" name="password" placeholder="********" required>
             </div>
             <div class="form-check mb-3">
-                <input class="form-check-input" type="checkbox" value="" id="remember">
+                <input class="form-check-input" type="checkbox" name="remember" value="1" id="remember">
                 <label class="form-check-label" for="remember">Remember me</label>
             </div>
             <button class="cg-btn-primary w-100" type="submit">Login</button>
