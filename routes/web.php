@@ -35,6 +35,10 @@ Route::post('/search', [HomeController::class, 'search']);
 
 // Logged-in user routes
 Route::middleware('auth')->group(function () {
+    Route::post('/post/{postId}', [UserPostController::class, 'addReply'])->name('post-detail-reply');
+    Route::get('/plans', [SubscriptionController::class, 'view']);
+    Route::post('/plans', [SubscriptionController::class, 'subscribe']);
+    Route::post('/remove-membership', [SubscriptionController::class, 'unsubscribe']);
     Route::get('/edit-profile', [ProfileController::class, 'viewEditProfile']);
     Route::post('/edit-profile', [ProfileController::class, 'editProfile']);
     Route::get('/profile', [ProfileController::class, 'view']);
@@ -45,11 +49,7 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth', 'role:user'])->group(function () {
     Route::get('/add-question', [UserPostController::class, 'view'])->name('add-question-view');
     Route::post('/add-question', [UserPostController::class, 'addQuestion'])->name('add-question');
-    Route::post('/post/{postId}', [UserPostController::class, 'addReply'])->name('post-detail-reply');
     Route::post('/like', [UserPostController::class, 'likePost'])->name('like-post');
-    Route::get('/plans', [SubscriptionController::class, 'view']);
-    Route::post('/plans', [SubscriptionController::class, 'subscribe']);
-    Route::post('/remove-membership', [SubscriptionController::class, 'unsubscribe']);
     Route::get('/edit-post/{postId}', [UserPostController::class, 'viewEditPost'])->name('view-edit-post');
     Route::post('/edit-post/{postId}', [UserPostController::class, 'editPost'])->name('edit-post');
     Route::post('/delete-post', [UserPostController::class, 'deletePost'])->name('delete-post');
