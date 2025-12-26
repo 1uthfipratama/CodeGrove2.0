@@ -16,15 +16,6 @@
 
         <form class="w-100" action="/plans" method="POST">
             @csrf
-            @if ($errors->any())
-                <div class="alert alert-danger">
-                    <ul class="mb-0">
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
             @php
                 $badgeMap = [
                     'Basic' => 'Starter',
@@ -45,10 +36,9 @@
                         $badge = $badgeMap[$sub->subscription_name] ?? 'Plan';
                         $perks = $perkMap[$sub->subscription_name] ?? ['Access to the CodeGrove community', 'Post questions and receive replies', 'Track your learning journey'];
                         $inputId = "subscription{$sub->id}";
-                        $isChecked = old('subscription_id') ? (old('subscription_id') == $sub->id) : $index === 0;
                     @endphp
-                    <label class="cg-card cg-plan-card {{ $isChecked ? 'active' : '' }}" data-plan-card for="{{ $inputId }}">
-                        <input type="radio" id="{{ $inputId }}" name="subscription_id" value="{{ $sub->id }}" class="d-none" {{ $isChecked ? 'checked' : '' }} required>
+                    <label class="cg-card cg-plan-card {{ $index === 0 ? 'active' : '' }}" data-plan-card for="{{ $inputId }}">
+                        <input type="radio" id="{{ $inputId }}" name="subscription_id" value="{{ $sub->id }}" class="d-none" {{ $index === 0 ? 'checked' : '' }} required>
                         <div class="d-flex justify-content-between align-items-start mb-2">
                             <h5 class="fw-bold mb-0">{{$sub->subscription_name}}</h5>
                             <span class="cg-status-badge cg-status-active">{{$badge}}</span>

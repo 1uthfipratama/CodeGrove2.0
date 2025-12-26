@@ -40,7 +40,6 @@
             <div class="mb-3">
                 <label class="form-label">Password</label>
                 <input type="password" class="cg-input" name="password" required>
-                <small class="text-muted">Must include at least 8 characters, a capital letter, a number, and a symbol.</small>
                 @error('password')
                     <div class="cg-error">{{ $message }}</div>
                 @enderror
