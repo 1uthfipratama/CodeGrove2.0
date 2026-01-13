@@ -79,15 +79,17 @@
                 <div>📊 {{ $posts->total() }} posts</div>
             </div>
             @if($isFiltered)
-                <a href="{{ url()->current() }}" class="cg-btn-secondary btn-sm">Clear Filters</a>
+                <div class="w-100 d-flex justify-content-center">
+                    <a href="{{ url()->current() }}" class="cg-btn-primary btn-sm"><span class="cg-btn-text">Clear Filters</span></a>
+                </div>
             @endif
         </div>
 
         <section class="cg-post-grid">
             @foreach ($posts as $post)
                 @php
-                    $languageName = $post->programmingLanguage->programming_language_name;
-                    $likesCount = $post->likes_count ?? ($post->likes->count() ?? 0);
+                    $languageName = optional($post->programmingLanguage)->programming_language_name ?? 'Unknown';
+                    $likesCount = $post->likes_count ?? ($post->likes?->count() ?? 0);
                 @endphp
                 <article class="cg-card cg-post-card position-relative">
                     <div class="d-flex justify-content-between align-items-start mb-3">
@@ -102,7 +104,7 @@
                         <div class="d-flex flex-column align-items-end gap-2">
                             <span class="cg-status-badge {{ $post->status === 'archived' ? 'cg-status-archived' : 'cg-status-active' }}">{{ucwords($post->status)}}</span>
                             <span class="cg-language-badge" data-lang="{{$languageName}}">
-                                <img src="{{ asset('storage/'.$post->programmingLanguage->programming_language_image_path) }}" alt="{{$languageName}} icon" class="language-icon">
+                                <img src="{{ asset('storage/' . (optional($post->programmingLanguage)->programming_language_image_path ?? '')) }}" alt="{{$languageName}} icon" class="language-icon">
                                 {{$languageName}}
                             </span>
                             @if($likesCount >= 10)

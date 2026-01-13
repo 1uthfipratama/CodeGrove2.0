@@ -26,7 +26,7 @@ class ProfileController extends Controller
             $profile_picture = 'storage/images/'.$user->display_picture_path;
         }
         else {
-            $profile_picture = 'storage/asset/gg--profile.png';
+            $profile_picture = 'storage/asset/default.svg';
         }
         $topPosts = Post::leftJoin('user_likes', 'posts.id', '=', 'user_likes.post_id')
                 ->select('posts.id', 'posts.user_id', 'posts.programming_language_id', 'posts.post_id', 'posts.post_content', DB::raw('COUNT(user_likes.id) as like_count'))
@@ -57,7 +57,7 @@ class ProfileController extends Controller
             $profile_picture = 'storage/images/'.$user->display_picture_path;
         }
         else {
-            $profile_picture = 'storage/asset/gg--profile.png';
+            $profile_picture = 'storage/asset/default.svg';
         }
         return view('edit_profile', ['profile_picture' => $profile_picture, 'archiveCount' => $archiveCount]);
     }
@@ -91,9 +91,108 @@ class ProfileController extends Controller
             $image = $request->file('profile_picture');
             $imageName = time() . '.' . $image->getClientOriginalExtension();
             $image->move(public_path('storage/images'), $imageName);
+            // delete previous custom image (if any and not default)
+            if ($user->display_picture_path) {
+                $prev = public_path('storage/images/' . $user->display_picture_path);
+                if (file_exists($prev) && !str_contains(basename($prev), 'default')) {
+                    @unlink($prev);
+                }
+            }
             $user->display_picture_path = $imageName;
+        } else {
+            $resetPhoto = $request->input('reset_photo');
+            if ($resetPhoto && $resetPhoto !== '0') {
+                // user requested reset via copying default to images earlier
+                // delete previous custom image if present and not default
+                if ($user->display_picture_path) {
+                    $prev = public_path('storage/images/' . $user->display_picture_path);
+                    if (file_exists($prev) && !str_contains(basename($prev), 'default')) {
+                        @unlink($prev);
+                    }
+                }
+                // set the copied default filename as the stored picture
+                $user->display_picture_path = $resetPhoto;
+            }
         }
         $user->save();
         return redirect('profile')->with('success', 'Profile updated successfully.');
+    }
+
+    public function resetProfilePicture(Request $request)
+    {
+        $user = Auth::user();
+        if (!$user) {
+            return redirect()->back()->with('error', 'Unauthorized.');
+        }
+
+        // If user has a custom uploaded image, attempt to delete it
+        if ($user->display_picture_path) {
+            $imagePath = public_path('storage/images/' . $user->display_picture_path);
+            if (file_exists($imagePath)) {
+                // Avoid deleting a shared default asset by checking filename
+                $base = basename($imagePath);
+                $defaults = ['default.svg', 'defaultcopy.svg', 'gg--profile.png', 'gg--profile.svg'];
+                if (!in_array($base, $defaults)) {
+                    @unlink($imagePath);
+                }
+            }
+        }
+
+        // Reset to default by clearing the stored path
+        $user->display_picture_path = null;
+        $user->save();
+
+        if ($request->wantsJson() || $request->acceptsJson()) {
+            return response()->json(['success' => true]);
+        }
+
+        return redirect()->back()->with('success', 'Profile photo reset to default.');
+    }
+
+    public function copyDefaultToImages(Request $request)
+    {
+        $user = Auth::user();
+        if (!$user) return response()->json(['error' => 'Unauthorized'], 401);
+
+        $defaultPath = public_path('storage/asset/default.svg');
+        if (!file_exists($defaultPath)) return response()->json(['error' => 'Default image missing'], 500);
+
+        // Use fixed name for the copied default so it can be recognized: defaultcopy.svg
+        $newName = 'defaultcopy.svg';
+        $imagesDir = public_path('storage/images');
+        if (!is_dir($imagesDir)) mkdir($imagesDir, 0755, true);
+        $dest = $imagesDir . DIRECTORY_SEPARATOR . $newName;
+
+        // Overwrite existing copy if present
+        if (file_exists($dest)) {
+            @unlink($dest);
+        }
+
+        if (!copy($defaultPath, $dest)) {
+            return response()->json(['error' => 'Unable to copy file'], 500);
+        }
+
+        return response()->json(['success' => true, 'filename' => $newName]);
+    }
+
+    public function deleteTempPhoto(Request $request)
+    {
+        $user = Auth::user();
+        if (!$user) return response()->json(['error' => 'Unauthorized'], 401);
+
+        $filename = $request->input('filename');
+        if (!$filename) return response()->json(['error' => 'Missing filename'], 400);
+
+        // allow deleting files created by copyDefaultToImages (defaultcopy.svg or default_copy_*)
+        if ($filename !== 'defaultcopy.svg' && !str_starts_with($filename, 'default_copy_')) {
+            return response()->json(['error' => 'Invalid filename'], 400);
+        }
+
+        $path = public_path('storage/images/' . $filename);
+        if (file_exists($path)) {
+            @unlink($path);
+        }
+
+        return response()->json(['success' => true]);
     }
 }

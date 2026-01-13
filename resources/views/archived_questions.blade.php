@@ -40,7 +40,7 @@
         <section class="cg-post-grid">
             @foreach ($posts as $post)
                 @php
-                    $languageName = $post->programmingLanguage->programming_language_name;
+                    $languageName = optional($post->programmingLanguage)->programming_language_name ?? 'Unknown';
                 @endphp
                 <article class="cg-card cg-post-card position-relative">
                     <div class="d-flex justify-content-between align-items-start mb-3">

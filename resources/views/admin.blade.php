@@ -82,7 +82,7 @@
         <section class="cg-post-grid">
             @foreach ($posts as $post)
                 @php
-                    $languageName = $post->programmingLanguage->programming_language_name;
+                    $languageName = optional($post->programmingLanguage)->programming_language_name ?? 'Unknown';
                     $likesCount = $post->likes_count ?? ($post->likes->count() ?? 0);
                 @endphp
                 <article class="cg-card cg-post-card position-relative">

@@ -18,10 +18,12 @@
                     </div>
                 </div>
                 <div class="d-flex align-items-center flex-wrap gap-2 justify-content-end">
-                    <span class="cg-language-badge" data-lang="{{$post->programmingLanguage->programming_language_name}}">
-                        <img src="{{ asset('storage/'.$post->programmingLanguage->programming_language_image_path ?? '') }}" alt="{{ $post->programmingLanguage->programming_language_name }}" class="language-icon">
-                        {{$post->programmingLanguage->programming_language_name}}
-                    </span>
+                    @if(optional($post->programmingLanguage)->programming_language_name)
+                        <span class="cg-language-badge" data-lang="{{ optional($post->programmingLanguage)->programming_language_name }}">
+                            <img src="{{ asset('storage/' . (optional($post->programmingLanguage)->programming_language_image_path ?? '')) }}" alt="{{ optional($post->programmingLanguage)->programming_language_name }}" class="language-icon">
+                            {{ optional($post->programmingLanguage)->programming_language_name }}
+                        </span>
+                    @endif
                     @if (Auth::user() && $post->user->id == Auth::user()->id)
                         <a href="/edit-post/{{$post->id}}" class="cg-btn-secondary btn-sm d-flex align-items-center gap-1">Edit</a>
                     @endif
@@ -52,7 +54,7 @@
                     @if(isset($post->views))
                         <span class="d-inline-flex align-items-center gap-1">👁️ {{ $post->views }} views</span>
                     @endif
-                    <span class="d-inline-flex align-items-center gap-1">💬 {{ $replies->count() }} replies</span>
+                        <span class="d-inline-flex align-items-center gap-1">💬 {{ $replies->count() }} replies</span>
                 </div>
                 <form action="/like" method="post" class="d-flex align-items-center gap-2">
                     @csrf
@@ -68,7 +70,7 @@
             </div>
         </div>
 
-        @php $replyCount = $replies->count(); @endphp
+                    @php $replyCount = $replies->count(); @endphp
         <div class="cg-card mb-3 d-flex justify-content-between align-items-center flex-wrap gap-2">
             <h4 class="mb-0 fw-bold d-flex align-items-center gap-2 text-gradient">💬 {{ $replyCount > 0 ? 'Replies (' . $replyCount . ')' : 'No replies yet - Be the first!' }}</h4>
             <a href="#reply-form" class="cg-btn-secondary btn-sm">Jump to reply form</a>
@@ -93,10 +95,12 @@
                                 <div class="cg-meta">{{ $reply->created_at ? $reply->created_at->diffForHumans() : 'recently' }}</div>
                             </div>
                         </div>
-                        <span class="cg-language-badge" data-lang="{{$reply->programmingLanguage->programming_language_name}}">
-                            <img src="{{ asset('storage/'.$reply->programmingLanguage->programming_language_image_path ?? '') }}" alt="{{ $reply->programmingLanguage->programming_language_name }}" class="language-icon">
-                            {{$reply->programmingLanguage->programming_language_name}}
-                        </span>
+                        @if(optional($reply->programmingLanguage)->programming_language_name)
+                            <span class="cg-language-badge" data-lang="{{ optional($reply->programmingLanguage)->programming_language_name }}">
+                                <img src="{{ asset('storage/' . (optional($reply->programmingLanguage)->programming_language_image_path ?? '')) }}" alt="{{ optional($reply->programmingLanguage)->programming_language_name }}" class="language-icon">
+                                {{ optional($reply->programmingLanguage)->programming_language_name }}
+                            </span>
+                        @endif
                     </div>
 
                     <p class="mt-3 mb-2">{{$reply->post_content}}</p>
@@ -119,9 +123,9 @@
             @endforeach
         </div>
 
-        <form action="/post/{{$post->id}}" method="post" id="reply-form" class="cg-card cg-form mt-4 position-sticky" style="bottom: 20px;">
+        <form action="/post/{{$post->id}}" method="post" id="reply-form" class="cg-card cg-form mt-4">
             @csrf
-            <input type="hidden" name="programming_language_id" value={{$post->programmingLanguage->id}}>
+            <input type="hidden" name="programming_language_id" value="{{ $post->programming_language_id ?? optional($post->programmingLanguage)->id ?? '' }}">
             <input type="hidden" name="post_id" value={{$post->id}}>
             <label for="reply" class="form-label">Add a reply</label>
             <textarea class="cg-textarea" placeholder="Add a reply here..." rows="3" name="reply"></textarea>

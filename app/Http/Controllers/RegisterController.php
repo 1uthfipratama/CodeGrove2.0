@@ -45,7 +45,7 @@ class RegisterController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'dob' => $request->dob,
-            'display_picture_path' => 'gg--profile.png',
+            'display_picture_path' => 'default.svg',
             'role' => 'user'
         ]);
         

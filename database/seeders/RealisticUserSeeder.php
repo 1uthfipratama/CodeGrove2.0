@@ -33,7 +33,7 @@ class RealisticUserSeeder extends Seeder
                 'password' => Hash::make('Password123!'),
                 'dob' => $this->randomDob(),
                 'role' => 'user',
-                'display_picture_path' => 'gg--profile.png',
+                'display_picture_path' => 'default.svg',
                 'lines' => $this->weightedLines(),
             ]);
         }
@@ -44,7 +44,7 @@ class RealisticUserSeeder extends Seeder
             'password' => Hash::make('Admin123!'),
             'dob' => Carbon::now()->subYears(30)->toDateString(),
             'role' => 'admin',
-            'display_picture_path' => 'gg--profile.png',
+            'display_picture_path' => 'default.svg',
             'lines' => 0,
         ]);
     }

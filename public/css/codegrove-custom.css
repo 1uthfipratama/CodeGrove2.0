@@ -280,6 +280,7 @@ p { color: var(--cg-text-secondary); }
     box-shadow: 0 4px 14px rgba(102, 126, 234, 0.4);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
+.cg-btn-primary, .cg-btn-primary * { text-decoration: none; }
 .cg-btn-primary:hover { transform: translateY(-2px) scale(1.02); box-shadow: 0 8px 20px rgba(99,102,241,0.45); }
 .cg-btn-primary:active { transform: scale(0.98); }
 
@@ -296,6 +297,45 @@ p { color: var(--cg-text-secondary); }
     transition: var(--cg-transition);
 }
 .cg-btn-secondary:hover { background: var(--cg-primary); color: #fff; box-shadow: 0 8px 20px rgba(99,102,241,0.35); }
+
+/* Logout button styles */
+.cg-logout-circle {
+    display: inline-grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--cg-danger);
+    color: #fff;
+    border: none;
+    padding: 0;
+}
+.cg-logout-circle span[data-feather], .cg-logout-circle svg { width: 18px; height: 18px; color: #fff; }
+
+.cg-logout-mobile {
+    background: var(--cg-danger);
+    color: #fff;
+    border: none;
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-weight: 700;
+}
+
+/* Ensure archived count badge is always readable and centered */
+.navbar-nav .badge.bg-danger,
+.cg-mobile-menu .badge.bg-danger,
+.cg-mobile-menu .list-group .badge.bg-danger {
+    color: #fff !important;
+    min-width: 28px;
+    height: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    padding: 0 10px;
+    font-weight: 700;
+    font-size: 0.85rem;
+}
 
 .cg-fab {
     position: fixed;
@@ -397,7 +437,10 @@ p { color: var(--cg-text-secondary); }
 
 .cg-profile-avatar:hover { transform: scale(1.05) rotate(2deg); }
 
-.cg-stats-grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); margin-top: -40px; }
+.cg-stats-grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); margin-top: 20px; }
+@media (min-width: 900px) {
+    .cg-stats-grid { margin-top: 24px; }
+}
 .cg-stat-card { text-align: center; padding: 20px; }
 .cg-stat-number { font-size: 36px; font-weight: 700; }
 
@@ -533,6 +576,14 @@ p { color: var(--cg-text-secondary); }
 [data-theme="dark"] .cg-search input {
     background: var(--cg-card);
     border-color: var(--cg-border);
+}
+
+[data-theme="dark"] .cg-search input {
+    color: var(--cg-text);
+}
+
+[data-theme="dark"] .cg-search input::placeholder {
+    color: var(--cg-text-secondary);
 }
 
 [data-theme="dark"] .cg-reply-card.solution {

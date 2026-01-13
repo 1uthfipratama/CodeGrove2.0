@@ -41,6 +41,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/remove-membership', [SubscriptionController::class, 'unsubscribe']);
     Route::get('/edit-profile', [ProfileController::class, 'viewEditProfile']);
     Route::post('/edit-profile', [ProfileController::class, 'editProfile']);
+    Route::post('/edit-profile/reset-photo', [ProfileController::class, 'resetProfilePicture']);
+    Route::post('/edit-profile/copy-default', [ProfileController::class, 'copyDefaultToImages']);
+    Route::post('/edit-profile/delete-temp', [ProfileController::class, 'deleteTempPhoto']);
     Route::get('/profile', [ProfileController::class, 'view']);
     Route::post('/logout', [LoginController::class, 'logout']);
 });

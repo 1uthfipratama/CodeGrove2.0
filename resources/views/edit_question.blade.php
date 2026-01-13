@@ -18,7 +18,7 @@
                     <label for="programming-language" class="form-label">Programming Language</label>
                     <select class="cg-select" id="programming-language" name="language">
                         @foreach ($languages as $lang)
-                            <option value="{{$lang->id}}" {{ $post->programmingLanguage->id == $lang->id ? 'selected' : '' }}>{{$lang->programming_language_name}}</option>
+                            <option value="{{$lang->id}}" {{ optional($post->programmingLanguage)->id == $lang->id ? 'selected' : '' }}>{{$lang->programming_language_name}}</option>
                         @endforeach
                     </select>
                 </div>

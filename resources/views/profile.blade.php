@@ -6,17 +6,33 @@
     @include('navbar')
     <main class="cg-container">
         <section class="cg-profile-hero mb-4">
-            <img src="{{ asset($profile_picture) }}" class="cg-profile-avatar" alt="Profile Picture">
-            <h1 class="mt-3">{{ $user->username }}</h1>
-            <div class="mt-2"><span class="cg-lines-badge">🔥 {{ $user->lines }} Lines</span></div>
-            @if (isset($membership))
-                <div class="mt-3 cg-status-badge cg-status-active">{{ $membership->subscription->subscription_name }}</div>
-                <form action="/remove-membership" method="post" class="mt-2">
-                    @csrf
-                    <button class="cg-btn-secondary btn-sm">Unsubscribe</button>
-                </form>
-            @endif
-            <a href="/plans" class="cg-btn-primary mt-3">View Available Plans</a>
+            <div class="row g-3 align-items-center">
+                <div class="col-auto text-center">
+                    <img src="{{ asset($profile_picture) }}" class="cg-profile-avatar mb-2 mb-md-0" alt="Profile Picture">
+                </div>
+                <div class="col">
+                    <div class="d-flex justify-content-between align-items-start gap-3">
+                        <div>
+                            <h1 class="mb-1">{{ $user->username }}</h1>
+                            <div class="mt-2"><span class="cg-lines-badge">🔥 {{ $user->lines }} Lines</span></div>
+                            @if (isset($membership))
+                                <div class="mt-3">
+                                    <span class="cg-status-badge cg-status-active">{{ $membership->subscription->subscription_name }}</span>
+                                </div>
+                                <form action="/remove-membership" method="post" class="mt-2 d-inline-block">
+                                    @csrf
+                                    <button class="cg-btn-secondary btn-sm">Unsubscribe</button>
+                                </form>
+                            @endif
+                        </div>
+
+                        <div class="d-flex flex-column align-items-end gap-2">
+                            <a href="/edit-profile" class="cg-btn-secondary">Edit Profile</a>
+                            <a href="/plans" class="cg-btn-primary">View Plans</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </section>
 
         <section class="cg-stats-grid">
@@ -37,7 +53,6 @@
         <section class="mt-4">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h2 class="mb-0">Top Posts</h2>
-                <a href="/edit-profile" class="cg-btn-secondary">Edit Profile</a>
             </div>
             <div class="d-flex flex-column gap-3">
                 @foreach ($top_posts as $post)
@@ -50,7 +65,9 @@
                                     <div class="cg-meta">{{$post->created_at ? $post->created_at->diffForHumans() : 'recently'}}</div>
                                 </div>
                             </div>
-                            <span class="cg-language-badge" data-lang="{{$post->programmingLanguage->programming_language_name}}">{{$post->programmingLanguage->programming_language_name}}</span>
+                            @if(optional($post->programmingLanguage)->programming_language_name)
+                                <span class="cg-language-badge" data-lang="{{ optional($post->programmingLanguage)->programming_language_name }}">{{ optional($post->programmingLanguage)->programming_language_name }}</span>
+                            @endif
                         </div>
                         <p class="mb-3">{{$post->post_content}}</p>
                         <a href="/post/{{$post->id}}" class="cg-link">View all replies</a>

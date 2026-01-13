@@ -27,12 +27,12 @@
             <div class="form-check form-switch mb-0">
                 <input class="form-check-input" type="checkbox" role="switch" id="cgDarkToggle" aria-label="Toggle dark mode">
             </div>
-            @if (Auth::user())
+                    @if (Auth::user())
                 <a class="position-relative" href="/profile">
                     @if (Auth::user()->display_picture_path)
                         <img src="{{ asset('storage/images/'.Auth::user()->display_picture_path) }}" class="cg-profile-img" alt="Profile Picture">
                     @else
-                        <img src="{{ asset('storage/asset/gg--profile.png') }}" class="cg-profile-img" alt="Profile Picture">
+                        <img src="{{ asset('storage/asset/default.svg') }}" class="cg-profile-img" alt="Profile Picture">
                     @endif
                 </a>
             @endif
@@ -45,25 +45,27 @@
     <div class="collapse navbar-collapse" id="cgNav">
         <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2 px-3 py-2 py-lg-0">
             @if (Auth::user())
-                @if (Auth::user()->role == "user")
-                    <li class="nav-item"><a class="nav-link" href="/my-questions">My Questions</a></li>
+                    @if (Auth::user()->role == "user")
+                    <li class="nav-item"><a class="nav-link text-gradient" href="/my-questions">My Questions</a></li>
                     <li class="nav-item">
                         <a class="nav-link d-flex align-items-center gap-2" href="/archived-questions">
-                            Archived
-                            <span class="badge bg-danger">{{$archiveCount}}</span>
+                            <span class="text-gradient">Archived</span>
+                            <span class="badge bg-danger ms-2">{{ $archiveCount ?? 0 }}</span>
                         </a>
                     </li>
                 @endif
-                <li class="nav-item"><a class="nav-link" href="/plans">Plans</a></li>
+                <li class="nav-item"><a class="nav-link text-gradient" href="/plans">Plans</a></li>
                 <li class="nav-item">
                     <form action="/logout" method="post" id="logout-form2">
                         @csrf
-                        <button type="submit" class="btn nav-link">Log Out</button>
+                        <button type="submit" class="btn cg-logout-circle" aria-label="Log Out">
+                            <span data-feather="log-out"></span>
+                        </button>
                     </form>
                 </li>
             @else
-                <li class="nav-item"><a class="nav-link" href="/login">Login</a></li>
-                <li class="nav-item"><a class="nav-link" href="/register">Register</a></li>
+                <li class="nav-item"><a class="nav-link {{ request()->routeIs('home') ? 'text-gradient' : '' }}" href="/login">Login</a></li>
+                <li class="nav-item"><a class="nav-link {{ request()->routeIs('home') ? 'text-gradient' : '' }}" href="/register">Register</a></li>
             @endif
         </ul>
         <div class="cg-search d-lg-none w-100 px-3 pb-3">
@@ -93,16 +95,16 @@
     <div class="list-group list-group-flush">
         @if (Auth::user())
             <a href="/" class="list-group-item list-group-item-action cg-close-menu">Home</a>
-            <a href="/my-questions" class="list-group-item list-group-item-action cg-close-menu">My Questions</a>
-            <a href="/archived-questions" class="list-group-item list-group-item-action cg-close-menu">Archived ({{$archiveCount}})</a>
-            <a href="/plans" class="list-group-item list-group-item-action cg-close-menu">Plans</a>
+            <a href="/my-questions" class="list-group-item list-group-item-action cg-close-menu text-gradient">My Questions</a>
+            <a href="/plans" class="list-group-item list-group-item-action cg-close-menu text-gradient">Plans</a>
+            <a href="/archived-questions" class="list-group-item list-group-item-action cg-close-menu"> <span class="text-gradient">Archived</span> <span class="badge bg-danger ms-2">{{ $archiveCount ?? 0 }}</span></a>
             <form action="/logout" method="post" class="list-group-item">
                 @csrf
-                <button type="submit" class="btn w-100 cg-btn-secondary">Log Out</button>
+                <button type="submit" class="btn w-100 cg-logout-mobile">Log Out</button>
             </form>
-        @else
-            <a href="/login" class="list-group-item list-group-item-action cg-close-menu">Login</a>
-            <a href="/register" class="list-group-item list-group-item-action cg-close-menu">Register</a>
+            @else
+            <a href="/login" class="list-group-item list-group-item-action cg-close-menu {{ request()->routeIs('home') ? 'text-gradient' : '' }}">Login</a>
+            <a href="/register" class="list-group-item list-group-item-action cg-close-menu {{ request()->routeIs('home') ? 'text-gradient' : '' }}">Register</a>
         @endif
     </div>
 </div>
