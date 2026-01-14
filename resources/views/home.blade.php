@@ -94,17 +94,23 @@
                 <article class="cg-card cg-post-card position-relative">
                     <div class="d-flex justify-content-between align-items-start mb-3">
                         <div class="d-flex align-items-center gap-3">
-                            <img src="{{ asset('storage/images/'.$post->user->display_picture_path) }}" class="cg-profile-img" width="48" height="48" alt="User Image">
+                            @php
+                                $postUser = $post->user;
+                                $postUserImage = $postUser && $postUser->display_picture_path
+                                    ? asset('storage/images/' . $postUser->display_picture_path)
+                                    : asset('storage/asset/default.svg');
+                            @endphp
+                            <img src="{{ $postUserImage }}" class="cg-profile-img" width="48" height="48" alt="User Image">
                             <div>
                                 <div class="fw-semibold d-flex align-items-center gap-2">
-                                    <span>{{$post->user->username}}</span>
-                                    @php $subscriptionName = $post->user->currentSubscription?->subscription?->subscription_name; @endphp
+                                    <span>{{ $postUser->username ?? 'Unknown' }}</span>
+                                    @php $subscriptionName = $postUser?->currentSubscription?->subscription?->subscription_name; @endphp
                                     @if($subscriptionName)
                                         <span class="cg-status-badge cg-status-active">{{ $subscriptionName }}</span>
                                     @endif
                                 </div>
                                 <div class="cg-meta">Posted {{ $post->created_at ? $post->created_at->diffForHumans() : 'recently' }}</div>
-                                <div class="mt-1"><span class="cg-lines-badge">🔥 {{$post->user->lines}} Lines</span></div>
+                                <div class="mt-1"><span class="cg-lines-badge">🔥 {{ $postUser->lines ?? 0 }} Lines</span></div>
                             </div>
                         </div>
                         <div class="d-flex flex-column align-items-end gap-2">
