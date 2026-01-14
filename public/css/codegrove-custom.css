@@ -354,10 +354,13 @@ p { color: var(--cg-text-secondary); }
     opacity: 0;
     pointer-events: none;
     z-index: 900;
+    text-decoration: none;
+    line-height: 1;
+    transform-origin: center;
 }
 
 .cg-fab.visible { opacity: 1; pointer-events: auto; }
-.cg-fab:hover { transform: scale(1.1) rotate(90deg); }
+.cg-fab:hover { transform: rotate(90deg); }
 
 /* Form elements */
 .cg-form label { font-weight: 600; color: var(--cg-text); }

@@ -37,16 +37,18 @@
                     <div class="cg-error">{{ $message }}</div>
                 @enderror
             </div>
-            <div class="mb-3">
+            <div class="mb-3 position-relative">
                 <label class="form-label">Password</label>
-                <input type="password" class="cg-input" name="password" required>
+                <input type="password" class="cg-input" name="password" required data-toggle-password>
+                <button type="button" class="btn btn-link cg-toggle-password" aria-label="Show password" data-toggle-password-btn>Show</button>
                 @error('password')
                     <div class="cg-error">{{ $message }}</div>
                 @enderror
             </div>
-            <div class="mb-3">
+            <div class="mb-3 position-relative">
                 <label class="form-label">Confirm Password</label>
-                <input type="password" class="cg-input" name="password_confirmation" required>
+                <input type="password" class="cg-input" name="password_confirmation" required data-toggle-password-confirm>
+                <button type="button" class="btn btn-link cg-toggle-password cg-toggle-password-confirm" aria-label="Show password" data-toggle-password-confirm-btn>Show</button>
                 @error('password_confirmation')
                     <div class="cg-error">{{ $message }}</div>
                 @enderror
@@ -66,4 +68,41 @@
         </div>
     </div>
 </div>
+<script>
+    (function () {
+        var btn = document.querySelector('[data-toggle-password-btn]');
+        var input = document.querySelector('[data-toggle-password]');
+        if (btn && input) {
+            btn.addEventListener('click', function () {
+                var isHidden = input.type === 'password';
+                input.type = isHidden ? 'text' : 'password';
+                btn.textContent = isHidden ? 'Hide' : 'Show';
+                btn.setAttribute('aria-label', isHidden ? 'Hide password' : 'Show password');
+            });
+        }
+        var confirmBtn = document.querySelector('[data-toggle-password-confirm-btn]');
+        var confirmInput = document.querySelector('[data-toggle-password-confirm]');
+        if (confirmBtn && confirmInput) {
+            confirmBtn.addEventListener('click', function () {
+                var isHidden = confirmInput.type === 'password';
+                confirmInput.type = isHidden ? 'text' : 'password';
+                confirmBtn.textContent = isHidden ? 'Hide' : 'Show';
+                confirmBtn.setAttribute('aria-label', isHidden ? 'Hide password' : 'Show password');
+            });
+        }
+    })();
+</script>
+<style>
+    .cg-toggle-password {
+        position: absolute;
+        right: 12px;
+        top: 38px;
+        padding: 0;
+        font-size: 0.85rem;
+        text-decoration: none;
+    }
+    .cg-toggle-password-confirm {
+        top: 38px;
+    }
+</style>
 @endsection

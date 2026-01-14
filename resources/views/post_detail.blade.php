@@ -12,6 +12,10 @@
                     <div>
                         <div class="fw-bold d-flex align-items-center gap-2">
                             <span>{{$post->user->username}}</span>
+                            @php $subscriptionName = $post->user->currentSubscription?->subscription?->subscription_name; @endphp
+                            @if($subscriptionName)
+                                <span class="cg-status-badge cg-status-active">{{ $subscriptionName }}</span>
+                            @endif
                             <span class="cg-status-badge cg-status-active d-inline-flex align-items-center">❓ Main Question</span>
                         </div>
                         <div class="cg-meta">Posted {{ $post->created_at ? $post->created_at->diffForHumans() : 'recently' }}</div>
@@ -87,7 +91,12 @@
                             <span class="badge bg-secondary">Reply #{{ $index + 1 }}</span>
                             <img src="{{ asset('storage/images/'.$reply->user->display_picture_path) }}" class="cg-profile-img" width="48" height="48" alt="User Image">
                             <div>
-                                <div class="fw-semibold d-flex align-items-center gap-2">{{$reply->user->username}}
+                                <div class="fw-semibold d-flex align-items-center gap-2">
+                                    <span>{{$reply->user->username}}</span>
+                                    @php $subscriptionName = $reply->user->currentSubscription?->subscription?->subscription_name; @endphp
+                                    @if($subscriptionName)
+                                        <span class="cg-status-badge cg-status-active">{{ $subscriptionName }}</span>
+                                    @endif
                                     @if ($reply->is_solution)
                                         <span class="cg-status-badge cg-status-solution">✓ Solution</span>
                                     @endif

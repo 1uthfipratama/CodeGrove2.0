@@ -5,9 +5,9 @@
 @section('content')
     <div class="container-fluid bg-dark" style="height: 100vh; position: relative; overflow: hidden;">
         <div class="row justify-content-center align-items-center" style="height: 100%;">
-            <div class="d-flex justify-content-center align-items-center" style="position: relative; z-index: 999;">
+            <div class="d-flex flex-column justify-content-center align-items-center" style="position: relative; z-index: 999;">
                 @if (session('success'))
-                    <div class="alert alert-success position-absolute top-0 start-50 translate-middle-x mt-3 w-75 text-center">
+                    <div class="alert alert-success cg-success-toast w-75 text-center mb-4">
                         {{ session('success') }}
                     </div>
                 @endif
@@ -15,10 +15,10 @@
                     @csrf
                     <div class="d-flex justify-content-center align-items-center">
                         @foreach ($languages as $lang)
-                            <div class="col-md-4" style="width: 10vw; margin: 20px">
+                            <div class="col-md-4" style="width: 12vw; margin: 20px">
                                 <input type="checkbox" class="custom-checkbox" id="card{{$lang->id}}" name="selected_languages[]" value={{$lang->id}}>
                                 <label class="card" for="card{{$lang->id}}">
-                                    <img src="{{ asset($lang->programming_language_image_path) }}" class="card-img-top" alt="Language image">
+                                    <img src="{{ asset('storage/' . $lang->programming_language_image_path) }}" class="card-img-top" alt="Language image">
                                     <div class="card-body">
                                         <h5 class="card-title">{{$lang->programming_language_name}}</h5>
                                     </div>
@@ -143,11 +143,28 @@
         })();
     </script>
     <style>
+        .cg-success-toast {
+            animation: cg-slide-up 0.6s ease-out both;
+            margin: 0 auto;
+        }
+        @keyframes cg-slide-up {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
         .card {
-            cursor: pointer; /* Make the card clickable */
+            cursor: pointer;
+            border: 2px solid #fff;
+            text-align: center;
+        }
+        .card-img-top {
+            display: block;
+            margin: 0 auto;
+            max-width: 64px;
+            height: auto;
         }
         .card-title {
             color: #111;
+            text-align: center;
         }
         .custom-checkbox {
             display: none; /* Hide the actual checkbox */

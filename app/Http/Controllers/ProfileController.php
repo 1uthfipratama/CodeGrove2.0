@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
+use App\Models\ProgrammingLanguage;
 use App\Models\UserLike;
+use App\Models\UserProgrammingLanguage;
 use App\Models\UserSubscription;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -40,7 +42,20 @@ class ProfileController extends Controller
                         ->count();
         $totalPostLiked = UserLike::where('user_id', $user->id)->count();
         $membership = UserSubscription::where('user_id', $user->id)->first();
-        return view('profile', ['user' => $user, 'top_posts' => $topPosts, 'total_like_count' => $totalLikeCount, 'total_post_like' => $totalPostLiked, 'membership' => $membership, 'profile_picture' => $profile_picture, 'archiveCount' => $archiveCount]);
+        $userLanguageIds = $user->userProgrammingLanguage()
+            ->pluck('programming_language_id')
+            ->all();
+        $userLanguages = ProgrammingLanguage::whereIn('id', $userLanguageIds)->get();
+        return view('profile', [
+            'user' => $user,
+            'top_posts' => $topPosts,
+            'total_like_count' => $totalLikeCount,
+            'total_post_like' => $totalPostLiked,
+            'membership' => $membership,
+            'profile_picture' => $profile_picture,
+            'archiveCount' => $archiveCount,
+            'userLanguages' => $userLanguages
+        ]);
     }
 
     public function viewEditProfile()
@@ -59,7 +74,16 @@ class ProfileController extends Controller
         else {
             $profile_picture = 'storage/asset/default.svg';
         }
-        return view('edit_profile', ['profile_picture' => $profile_picture, 'archiveCount' => $archiveCount]);
+        $languages = ProgrammingLanguage::all();
+        $selectedLanguageIds = $user->userProgrammingLanguage()
+            ->pluck('programming_language_id')
+            ->all();
+        return view('edit_profile', [
+            'profile_picture' => $profile_picture,
+            'archiveCount' => $archiveCount,
+            'languages' => $languages,
+            'selectedLanguageIds' => $selectedLanguageIds
+        ]);
     }
 
     public function editProfile(Request $request)
@@ -115,6 +139,17 @@ class ProfileController extends Controller
             }
         }
         $user->save();
+        if ($request->has('languages_submitted')) {
+            $selectedLanguages = $request->input('selected_languages', []);
+            $selectedLanguages = array_values(array_unique(array_filter($selectedLanguages)));
+            UserProgrammingLanguage::where('user_id', $user->id)->delete();
+            foreach ($selectedLanguages as $langId) {
+                UserProgrammingLanguage::create([
+                    'user_id' => $user->id,
+                    'programming_language_id' => (int) $langId
+                ]);
+            }
+        }
         return redirect('profile')->with('success', 'Profile updated successfully.');
     }
 
@@ -194,5 +229,48 @@ class ProfileController extends Controller
         }
 
         return response()->json(['success' => true]);
+    }
+
+    public function deleteAccount(Request $request)
+    {
+        $user = Auth::user();
+        if (!$user) {
+            return redirect('/login');
+        }
+
+        if ($user->display_picture_path) {
+            $imagePath = public_path('storage/images/' . $user->display_picture_path);
+            if (file_exists($imagePath)) {
+                $base = basename($imagePath);
+                $defaults = ['default.svg', 'defaultcopy.svg', 'gg--profile.png', 'gg--profile.svg'];
+                if (!in_array($base, $defaults)) {
+                    @unlink($imagePath);
+                }
+            }
+        }
+
+        DB::transaction(function () use ($user) {
+            $userPostIds = Post::where('user_id', $user->id)->pluck('id')->all();
+            $replyIds = [];
+            if (!empty($userPostIds)) {
+                $replyIds = Post::whereIn('post_id', $userPostIds)->pluck('id')->all();
+            }
+            $postIdsToDelete = array_values(array_unique(array_merge($userPostIds, $replyIds)));
+            if (!empty($postIdsToDelete)) {
+                UserLike::whereIn('post_id', $postIdsToDelete)->delete();
+                Post::whereIn('id', $postIdsToDelete)->delete();
+            }
+
+            UserLike::where('user_id', $user->id)->delete();
+            UserProgrammingLanguage::where('user_id', $user->id)->delete();
+            UserSubscription::where('user_id', $user->id)->delete();
+            $user->delete();
+        });
+
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect('/')->with('success', 'Account deleted successfully.');
     }
 }

@@ -23,7 +23,8 @@ class HomeController extends Controller
         $sort = $request->sort;
         $selectedLanguage = $request->language;
 
-        $postsQuery = Post::where('status', 'active');
+        $postsQuery = Post::where('status', 'active')
+            ->with(['user.currentSubscription.subscription', 'programmingLanguage']);
 
         if ($selectedLanguage && $selectedLanguage != -1) {
             $postsQuery = $postsQuery->where('programming_language_id', $selectedLanguage);
@@ -59,7 +60,10 @@ class HomeController extends Controller
                         ->count();
         }
         $searchTerm = $request->input('search');
-        $posts = Post::where('post_content', 'LIKE', '%' . $searchTerm . '%')->where('status', 'active')->paginate(10);
+        $posts = Post::where('post_content', 'LIKE', '%' . $searchTerm . '%')
+            ->where('status', 'active')
+            ->with(['user.currentSubscription.subscription', 'programmingLanguage'])
+            ->paginate(10);
         $languages = ProgrammingLanguage::all();
         $sort = $request->sort;
         $selectedLanguage = $request->language;
@@ -79,7 +83,9 @@ class HomeController extends Controller
         $sort = $request->sort;
         $selectedLanguage = $request->language;
 
-        $postsQuery = Post::query();
+        $postsQuery = Post::where('status', 'active')
+            ->whereNull('post_id')
+            ->with(['user.currentSubscription.subscription', 'programmingLanguage']);
 
         if ($selectedLanguage && $selectedLanguage != -1) {
             $postsQuery = $postsQuery->where('programming_language_id', $selectedLanguage);
@@ -116,7 +122,11 @@ class HomeController extends Controller
         }
         
         $searchTerm = $request->input('search');
-        $posts = Post::where('post_content', 'LIKE', '%' . $searchTerm . '%')->paginate(10);
+        $posts = Post::where('post_content', 'LIKE', '%' . $searchTerm . '%')
+            ->where('status', 'active')
+            ->whereNull('post_id')
+            ->with(['user.currentSubscription.subscription', 'programmingLanguage'])
+            ->paginate(10);
         $languages = ProgrammingLanguage::all();
         $sort = $request->sort;
         $selectedLanguage = $request->language;
@@ -137,7 +147,9 @@ class HomeController extends Controller
         $sort = $request->sort;
         $selectedLanguage = $request->language;
 
-        $postsQuery = Post::where('status', 'active')->where('user_id', $userId);
+        $postsQuery = Post::where('status', 'active')
+            ->where('user_id', $userId)
+            ->with(['user.currentSubscription.subscription', 'programmingLanguage']);
 
         if ($selectedLanguage && $selectedLanguage != -1) {
             $postsQuery = $postsQuery->where('programming_language_id', $selectedLanguage);
@@ -175,8 +187,11 @@ class HomeController extends Controller
         }
 
         $searchTerm = $request->input('search');
-        $posts = Post::where('post_content', 'LIKE', '%' . $searchTerm . '%')->where('status', 'active')
-                    ->where('user_id', $userId)->paginate(10);
+        $posts = Post::where('post_content', 'LIKE', '%' . $searchTerm . '%')
+            ->where('status', 'active')
+            ->where('user_id', $userId)
+            ->with(['user.currentSubscription.subscription', 'programmingLanguage'])
+            ->paginate(10);
         $languages = ProgrammingLanguage::all();
         $sort = $request->sort;
         $selectedLanguage = $request->language;
@@ -185,6 +200,9 @@ class HomeController extends Controller
 
     public function viewArchivedQuestions(Request $request)
     {
+        if (!Auth::user() || Auth::user()->role !== 'admin') {
+            return redirect('/')->with('error', 'Unauthorized.');
+        }
         $userId = -1;
         $archiveCount = Post::where('user_id', -1)->count();
         if (Auth::user()) {
@@ -197,7 +215,9 @@ class HomeController extends Controller
         $sort = $request->sort;
         $selectedLanguage = $request->language;
 
-        $postsQuery = Post::where('status', 'archived')->where('user_id', $userId);
+        $postsQuery = Post::where('status', 'archived')
+            ->whereNull('post_id')
+            ->with(['user.currentSubscription.subscription', 'programmingLanguage']);
 
         if ($selectedLanguage && $selectedLanguage != -1) {
             $postsQuery = $postsQuery->where('programming_language_id', $selectedLanguage);
@@ -225,6 +245,9 @@ class HomeController extends Controller
 
     public function searchArchived(Request $request)
     {
+        if (!Auth::user() || Auth::user()->role !== 'admin') {
+            return redirect('/')->with('error', 'Unauthorized.');
+        }
         $archiveCount = Post::where('user_id', -1)->count();
         $userId = -1;
         if (Auth::user()) {
@@ -236,7 +259,10 @@ class HomeController extends Controller
 
         $searchTerm = $request->input('search');
         $posts = Post::where('post_content', 'LIKE', '%' . $searchTerm . '%')
-                    ->where('user_id', $userId)->where('status', 'archived')->paginate(10);
+            ->where('status', 'archived')
+            ->whereNull('post_id')
+            ->with(['user.currentSubscription.subscription', 'programmingLanguage'])
+            ->paginate(10);
         $languages = ProgrammingLanguage::all();
         $sort = $request->sort;
         $selectedLanguage = $request->language;

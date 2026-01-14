@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\ProgrammingLanguage;
 use App\Models\UserProgrammingLanguage;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ProgrammingLanguageController extends Controller
 {
@@ -23,7 +24,10 @@ class ProgrammingLanguageController extends Controller
                 'programming_language_id' => intval($lang)
             ]);
         };
-        return redirect()->route('home');
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return redirect('/login')->with('success', 'Account created successfully. Please log in.');
     }
 
 }

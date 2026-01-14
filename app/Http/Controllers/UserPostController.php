@@ -67,8 +67,10 @@ class UserPostController extends Controller
                         ->count();
         }
         $postId = $request->route('postId');
-        $post = Post::find($postId);
-        $replies = Post::where('post_id', $postId)->get();
+        $post = Post::with(['user.currentSubscription.subscription', 'programmingLanguage'])->find($postId);
+        $replies = Post::where('post_id', $postId)
+            ->with(['user.currentSubscription.subscription', 'programmingLanguage'])
+            ->get();
         $userLike = UserLike::where('user_id', $userId)->where('post_id', $postId)->exists();
         $likes = UserLike::where('post_id', $postId)->count();
         return view('post_detail', ['post' => $post, 'replies' => $replies, 'userLike' => $userLike, 'likes' => $likes, 'archiveCount' => $archiveCount]);

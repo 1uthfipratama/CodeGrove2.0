@@ -18,11 +18,11 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         DB::table('programming_languages')->insert([
-            ['programming_language_name' => 'C', 'programming_language_image_path' => 'c.png', 'created_at' => Carbon::now()->subSeconds(2200)],
-            ['programming_language_name' => 'Java', 'programming_language_image_path' => 'java.png', 'created_at' => Carbon::now()->subSeconds(2200)],
-            ['programming_language_name' => 'HTML', 'programming_language_image_path' => 'html.png', 'created_at' => Carbon::now()->subSeconds(2200)],
-            ['programming_language_name' => 'JavaScript', 'programming_language_image_path' => 'js.png', 'created_at' => Carbon::now()->subSeconds(2200)],
-            ['programming_language_name' => 'Python', 'programming_language_image_path' => 'py.png', 'created_at' => Carbon::now()->subSeconds(2200)],
+            ['programming_language_name' => 'C', 'programming_language_image_path' => 'asset/c.png', 'created_at' => Carbon::now()->subSeconds(2200)],
+            ['programming_language_name' => 'Java', 'programming_language_image_path' => 'asset/java.png', 'created_at' => Carbon::now()->subSeconds(2200)],
+            ['programming_language_name' => 'HTML', 'programming_language_image_path' => 'asset/html.png', 'created_at' => Carbon::now()->subSeconds(2200)],
+            ['programming_language_name' => 'JavaScript', 'programming_language_image_path' => 'asset/js.png', 'created_at' => Carbon::now()->subSeconds(2200)],
+            ['programming_language_name' => 'Python', 'programming_language_image_path' => 'asset/py.png', 'created_at' => Carbon::now()->subSeconds(2200)],
         ]);
 
         $this->call(RealisticUserSeeder::class);

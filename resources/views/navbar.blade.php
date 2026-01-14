@@ -47,6 +47,8 @@
             @if (Auth::user())
                     @if (Auth::user()->role == "user")
                     <li class="nav-item"><a class="nav-link text-gradient" href="/my-questions">My Questions</a></li>
+                @endif
+                @if (Auth::user()->role == "admin")
                     <li class="nav-item">
                         <a class="nav-link d-flex align-items-center gap-2" href="/archived-questions">
                             <span class="text-gradient">Archived</span>
@@ -54,7 +56,9 @@
                         </a>
                     </li>
                 @endif
-                <li class="nav-item"><a class="nav-link text-gradient" href="/plans">Plans</a></li>
+                @if (Auth::user()->role == "user")
+                    <li class="nav-item"><a class="nav-link text-gradient" href="/plans">Plans</a></li>
+                @endif
                 <li class="nav-item">
                     <form action="/logout" method="post" id="logout-form2">
                         @csrf
@@ -96,8 +100,12 @@
         @if (Auth::user())
             <a href="/" class="list-group-item list-group-item-action cg-close-menu">Home</a>
             <a href="/my-questions" class="list-group-item list-group-item-action cg-close-menu text-gradient">My Questions</a>
-            <a href="/plans" class="list-group-item list-group-item-action cg-close-menu text-gradient">Plans</a>
-            <a href="/archived-questions" class="list-group-item list-group-item-action cg-close-menu"> <span class="text-gradient">Archived</span> <span class="badge bg-danger ms-2">{{ $archiveCount ?? 0 }}</span></a>
+            @if (Auth::user()->role == "user")
+                <a href="/plans" class="list-group-item list-group-item-action cg-close-menu text-gradient">Plans</a>
+            @endif
+            @if (Auth::user()->role == "admin")
+                <a href="/archived-questions" class="list-group-item list-group-item-action cg-close-menu"> <span class="text-gradient">Archived</span> <span class="badge bg-danger ms-2">{{ $archiveCount ?? 0 }}</span></a>
+            @endif
             <form action="/logout" method="post" class="list-group-item">
                 @csrf
                 <button type="submit" class="btn w-100 cg-logout-mobile">Log Out</button>

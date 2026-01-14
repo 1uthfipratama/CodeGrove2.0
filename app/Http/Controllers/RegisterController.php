@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 class RegisterController extends Controller
 {
@@ -40,13 +41,15 @@ class RegisterController extends Controller
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
+        $email = $request->email;
+        $isAdminEmail = Str::endsWith(strtolower($email), '@binus.edu.id');
         $user = User::create([
             'username' => $request->username,
-            'email' => $request->email,
+            'email' => $email,
             'password' => Hash::make($request->password),
             'dob' => $request->dob,
-            'display_picture_path' => 'default.svg',
-            'role' => 'user'
+            'display_picture_path' => 'defaultcopy.svg',
+            'role' => $isAdminEmail ? 'admin' : 'user'
         ]);
         
         $userId = $user->id;

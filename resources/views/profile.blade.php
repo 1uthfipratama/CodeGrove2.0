@@ -52,6 +52,22 @@
 
         <section class="mt-4">
             <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2 class="mb-0">Languages</h2>
+            </div>
+            <div class="d-flex flex-wrap gap-2">
+                @forelse ($userLanguages as $language)
+                    <span class="cg-language-badge" data-lang="{{ $language->programming_language_name }}">
+                        <img src="{{ asset('storage/' . $language->programming_language_image_path) }}" alt="{{ $language->programming_language_name }} icon" class="language-icon">
+                        {{ $language->programming_language_name }}
+                    </span>
+                @empty
+                    <div class="text-muted">No languages selected yet.</div>
+                @endforelse
+            </div>
+        </section>
+
+        <section class="mt-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
                 <h2 class="mb-0">Top Posts</h2>
             </div>
             <div class="d-flex flex-column gap-3">

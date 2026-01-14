@@ -96,7 +96,13 @@
                         <div class="d-flex align-items-center gap-3">
                             <img src="{{ asset('storage/images/'.$post->user->display_picture_path) }}" class="cg-profile-img" width="48" height="48" alt="User Image">
                             <div>
-                                <div class="fw-semibold">{{$post->user->username}}</div>
+                                <div class="fw-semibold d-flex align-items-center gap-2">
+                                    <span>{{$post->user->username}}</span>
+                                    @php $subscriptionName = $post->user->currentSubscription?->subscription?->subscription_name; @endphp
+                                    @if($subscriptionName)
+                                        <span class="cg-status-badge cg-status-active">{{ $subscriptionName }}</span>
+                                    @endif
+                                </div>
                                 <div class="cg-meta">Posted {{ $post->created_at ? $post->created_at->diffForHumans() : 'recently' }}</div>
                                 <div class="mt-1"><span class="cg-lines-badge">🔥 {{$post->user->lines}} Lines</span></div>
                             </div>
@@ -129,9 +135,6 @@
 
         @if ($posts instanceof \Illuminate\Pagination\LengthAwarePaginator)
             <div class="d-flex flex-column align-items-center mt-4">
-                <div class="text-muted small mb-2">
-                    Showing {{ $posts->firstItem() ?? 0 }} to {{ $posts->lastItem() ?? 0 }} of {{ $posts->total() }} results
-                </div>
                 <nav aria-label="Posts pagination" class="w-100 d-flex justify-content-center">
                     {{ $posts->appends(request()->query())->onEachSide(1)->links('pagination::bootstrap-5') }}
                 </nav>

@@ -55,10 +55,30 @@
                     <label for="dob" class="form-label">Date of Birth</label>
                     <input type="date" class="cg-input" id="dob" name="dob" value="{{ Auth::user()->dob }}">
                 </div>
+                <div class="mb-3">
+                    <label class="form-label">Preferred languages</label>
+                    <input type="hidden" name="languages_submitted" value="1">
+                    <div class="d-flex flex-wrap gap-3">
+                        @foreach ($languages as $language)
+                            @php
+                                $isChecked = in_array($language->id, $selectedLanguageIds ?? []);
+                            @endphp
+                            <label class="cg-card d-flex align-items-center gap-2" style="padding: 10px 12px;">
+                                <input type="checkbox" name="selected_languages[]" value="{{ $language->id }}" {{ $isChecked ? 'checked' : '' }}>
+                                <img src="{{ asset('storage/' . $language->programming_language_image_path) }}" alt="{{ $language->programming_language_name }} icon" width="28" height="28">
+                                <span>{{ $language->programming_language_name }}</span>
+                            </label>
+                        @endforeach
+                    </div>
+                </div>
                 <div class="d-flex justify-content-end gap-2">
                     <a href="/profile" id="cancelBtn" class="cg-btn-secondary">Cancel</a>
                     <button type="submit" class="cg-btn-primary">Save</button>
                 </div>
+            </form>
+            <form action="/delete-account" method="post" class="mt-3" onsubmit="return confirm('Delete your account? This cannot be undone.');">
+                @csrf
+                <button type="submit" class="cg-btn-secondary text-danger">Delete account</button>
             </form>
         </div>
     </main>

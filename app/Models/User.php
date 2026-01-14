@@ -52,6 +52,11 @@ class User extends Authenticatable
         return $this->hasMany(UserSubscription::class);
     }
 
+    public function currentSubscription()
+    {
+        return $this->hasOne(UserSubscription::class)->latestOfMany();
+    }
+
     public function userProgrammingLanguage()
     {
         return $this->hasMany(UserProgrammingLanguage::class);
